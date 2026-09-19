@@ -51,6 +51,6 @@ class Modal extends Component
          */
         public function render(): View|Closure|string
         {
-            return view('components.ui.modal');
+            return view('components.admin..ui.modal');
         }
 }

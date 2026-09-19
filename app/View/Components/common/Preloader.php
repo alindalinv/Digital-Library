@@ -21,6 +21,6 @@ class Preloader extends Component
      */
     public function render(): View|Closure|string
     {
-        return view('components.common.preloader');
+        return view('components.admin.common.preloader');
     }
 }

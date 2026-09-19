@@ -21,6 +21,6 @@ class UserDropdown extends Component
      */
     public function render(): View|Closure|string
     {
-        return view('components.header.user-dropdown');
+        return view('components.admin.header.user-dropdown');
     }
 }

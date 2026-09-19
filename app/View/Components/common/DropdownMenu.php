@@ -15,6 +15,6 @@ class DropdownMenu extends Component
 
     public function render(): View|Closure|string
     {
-        return view('components.common.dropdown-menu');
+        return view('components.admin.common.dropdown-menu');
     }
 }
