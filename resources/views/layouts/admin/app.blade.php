@@ -1,5 +1,6 @@
 <!DOCTYPE html>
-<html lang="{{ str_replace('_', '-', app()->getLocale()) }}" dir="{{ app()->getLocale() === 'ar' ? 'rtl' : 'ltr' }}" class="h-full bg-gray-50 dark:bg-gray-900">
+<html lang="{{ str_replace('_', '-', app()->getLocale()) }}" dir="{{ app()->getLocale() === 'ar' ? 'rtl' : 'ltr' }}"
+    class="h-full bg-gray-50 dark:bg-gray-900">
 
 <head>
     <meta charset="utf-8">
@@ -172,9 +173,13 @@
             <!-- app header start -->
             @include('layouts.admin.app-header')
             <!-- app header end -->
-            <div class="p-4 mx-auto max-w-(--breakpoint-2xl) md:p-6">
-                @yield('content')
-            </div>
+            <main class="flex-1 min-h-screen bg-gray-50 text-gray-800
+             dark:bg-gray-900 dark:text-gray-200
+             transition-colors duration-200">
+                <div class="p-4 mx-auto max-w-(--breakpoint-2xl) md:p-6">
+                    @yield('content')
+                </div>
+            </main>
         </div>
 
     </div>
