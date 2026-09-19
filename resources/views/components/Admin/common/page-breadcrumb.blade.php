@@ -1,7 +1,7 @@
 @props(['pageTitle' => 'Page'])
 
 <div class="flex flex-wrap items-center justify-between gap-3 mb-6">
-    <h2 class="text-xl font-semibold text-gray-800">
+    <h2 class="text-xl font-semibold text-gray-800 dark:text-white/90">
         {{ $pageTitle }}
     </h2>
     <nav>
@@ -30,7 +30,7 @@
                     </svg>
                 </a>
             </li>
-            <li class="text-sm text-gray-800">
+            <li class="text-sm text-gray-800 dark:text-white/90">
                 {{ $pageTitle }}
             </li>
         </ol>
