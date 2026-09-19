@@ -1,7 +1,7 @@
 @extends('layouts.admin.app')
 
 @section('content')
-    <x-common.page-breadcrumb pageTitle="Alerts" />
+    <x-admin.common.page-breadcrumb pageTitle="Alerts" />
 
     <div class="space-y-5 sm:space-y-6">
         {{-- Success Alert --}}

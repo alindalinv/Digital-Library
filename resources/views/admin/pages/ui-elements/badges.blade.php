@@ -1,7 +1,7 @@
 @extends('layouts.admin.app')
 
 @section('content')
-    <x-common.page-breadcrumb pageTitle="Badges" />
+    <x-admin.common.page-breadcrumb pageTitle="Badges" />
 
     @php
         use Illuminate\Support\HtmlString;
