@@ -2,7 +2,6 @@
             bg-gray-50 px-4 py-5 text-center
             border border-gray-200
             dark:bg-white/[0.03] dark:border-gray-800">
-
     <form method="POST" action="{{ route('admin.logout') }}">
         @csrf
         <button type="submit"

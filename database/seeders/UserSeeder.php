@@ -10,62 +10,71 @@ class UserSeeder extends Seeder
 {
     /**
      * Seed application users.
+     *
+     * Default password for all seeded users: "password"
      */
     public function run(): void
     {
-        // Super Admin
-        $superAdmin = User::updateOrCreate(
-            ['email' => 'superadmin@example.com'],
+        $defaultPassword = Hash::make('password');
+
+        $users = [
             [
-                'name' => 'Super Admin',
-                'password' => Hash::make('password'),
-            ]
-        );
-
-        $superAdmin->syncRoles(['Super Admin']);
-
-        // Admin
-        $admin = User::updateOrCreate(
-            ['email' => 'admin@example.com'],
+                'email'      => 'superadmin@example.com',
+                'first_name' => 'Super',
+                'last_name'  => 'Admin',
+                'name'       => 'Super Admin',
+                'phone'      => '+1 555 0100',
+                'role'       => 'Super Admin',
+            ],
             [
-                'name' => 'System Admin',
-                'password' => Hash::make('password'),
-            ]
-        );
-
-        $admin->syncRoles(['Admin']);
-
-        // Librarian
-        $librarian = User::updateOrCreate(
-            ['email' => 'librarian@example.com'],
+                'email'      => 'admin@example.com',
+                'first_name' => 'System',
+                'last_name'  => 'Admin',
+                'name'       => 'System Admin',
+                'phone'      => '+1 555 0101',
+                'role'       => 'Admin',
+            ],
             [
-                'name' => 'Library Staff',
-                'password' => Hash::make('password'),
-            ]
-        );
-
-        $librarian->syncRoles(['Librarian']);
-
-        // Editor
-        $editor = User::updateOrCreate(
-            ['email' => 'editor@example.com'],
+                'email'      => 'librarian@example.com',
+                'first_name' => 'Library',
+                'last_name'  => 'Staff',
+                'name'       => 'Library Staff',
+                'phone'      => '+1 555 0102',
+                'role'       => 'Librarian',
+            ],
             [
-                'name' => 'Content Editor',
-                'password' => Hash::make('password'),
-            ]
-        );
-
-        $editor->syncRoles(['Editor']);
-
-        // Member
-        $member = User::updateOrCreate(
-            ['email' => 'member@example.com'],
+                'email'      => 'editor@example.com',
+                'first_name' => 'Content',
+                'last_name'  => 'Editor',
+                'name'       => 'Content Editor',
+                'phone'      => '+1 555 0103',
+                'role'       => 'Editor',
+            ],
             [
-                'name' => 'Library Member',
-                'password' => Hash::make('password'),
-            ]
-        );
+                'email'      => 'member@example.com',
+                'first_name' => 'Library',
+                'last_name'  => 'Member',
+                'name'       => 'Library Member',
+                'phone'      => '+1 555 0104',
+                'role'       => 'Member',
+            ],
+        ];
 
-        $member->syncRoles(['Member']);
+        foreach ($users as $data) {
+            $user = User::updateOrCreate(
+                ['email' => $data['email']],
+                [
+                    'first_name'        => $data['first_name'],
+                    'last_name'         => $data['last_name'],
+                    'name'              => $data['name'],
+                    'phone'             => $data['phone'],
+                    'password'          => $defaultPassword,
+                    'status'            => 1,
+                    'email_verified_at' => now(),
+                ]
+            );
+
+            $user->syncRoles([$data['role']]);
+        }
     }
 }

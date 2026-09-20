@@ -5,6 +5,36 @@
         </h2>
     </x-slot>
 
+    @php
+        $totalBooks      = \App\Models\Book::count();
+        $totalUsers      = \App\Models\User::count();
+        $totalBorrowings = \App\Models\Borrowing::count();
+        $totalAuthors    = \App\Models\Author::count();
+
+        $featuredBooks = \App\Models\Book::with(['authors', 'category'])
+            ->where('is_featured', true)
+            ->latest()
+            ->take(8)
+            ->get();
+
+        $newArrivals = \App\Models\Book::with(['authors', 'category'])
+            ->latest()
+            ->take(8)
+            ->get();
+
+        $categories = \App\Models\Category::withCount('books')
+            ->having('books_count', '>', 0)
+            ->orderByDesc('books_count')
+            ->take(8)
+            ->get();
+
+        $testimonials = \App\Models\Review::with('user')
+            ->where('rating', '>=', 4)
+            ->latest()
+            ->take(6)
+            ->get();
+    @endphp
+
     <!-- Hero Section -->
     <section class="py-5 bg-primary text-white position-relative overflow-hidden">
         <div class="container py-5">

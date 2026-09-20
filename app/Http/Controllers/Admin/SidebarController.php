@@ -1,191 +1,218 @@
 <?php
 
 namespace App\Http\Controllers\Admin;
+
 use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
 
 class SidebarController extends Controller
 {
     public function getMenuData()
     {
+        $user = auth()->user();
+
         $menuGroups = [
             [
-                'title' => 'Menu',
-                'items' => [
-                    [
-                        'icon' => 'grid-icon',
-                        'name' => 'Dashboard',
-                        'subItems' => [
-                            ['name' => 'Ecommerce', 'path' => '/'],
-                            ['name' => 'Analytics', 'path' => '/analytics'],
-                            ['name' => 'Marketing', 'path' => '/marketing'],
-                            ['name' => 'CRM', 'path' => '/crm'],
-                            ['name' => 'Stocks', 'path' => '/stocks'],
-                            ['name' => 'SaaS', 'path' => '/saas', 'new' => true],
-                            ['name' => 'Logistics', 'path' => '/logistics', 'new' => true],
-                        ],
-                    ],
-                    [
-                        'icon' => 'bot-icon',
-                        'name' => 'AI Assistant',
-                        'new' => true,
-                        'subItems' => [
-                            ['name' => 'Text Generator', 'path' => '/text-generator'],
-                            ['name' => 'Image Generator', 'path' => '/image-generator'],
-                            ['name' => 'Code Generator', 'path' => '/code-generator'],
-                            ['name' => 'Video Generator', 'path' => '/video-generator'],
-                        ],
-                    ],
-                    [
-                        'icon' => 'cart-icon',
-                        'name' => 'E-commerce',
-                        'new' => true,
-                        'subItems' => [
-                            ['name' => 'Products', 'path' => '/products-list'],
-                            ['name' => 'Add Product', 'path' => '/add-product'],
-                            ['name' => 'Billing', 'path' => '/billing'],
-                            ['name' => 'Invoices', 'path' => '/invoices'],
-                            ['name' => 'Single Invoice', 'path' => '/single-invoice'],
-                            ['name' => 'Create Invoice', 'path' => '/create-invoice'],
-                            ['name' => 'Transactions', 'path' => '/transactions'],
-                            ['name' => 'Single Transaction', 'path' => '/single-transaction'],
-                        ],
-                    ],
-                    [
-                        'icon' => 'calendar-icon',
-                        'name' => 'Calendar',
-                        'path' => '/calendar',
-                    ],
-                    [
-                        'icon' => 'user-circle-icon',
-                        'name' => 'User Profile',
-                        'path' => '/profile',
-                    ],
-                    [
-                        'icon' => 'task-icon',
-                        'name' => 'Task',
-                        'subItems' => [
-                            ['name' => 'List', 'path' => '/task-list', 'pro' => false],
-                            ['name' => 'Kanban', 'path' => '/task-kanban', 'pro' => false],
-                        ],
-                    ],
-                    [
-                        'icon' => 'list-icon',
-                        'name' => 'Forms',
-                        'subItems' => [
-                            ['name' => 'Form Elements', 'path' => '/form-elements', 'pro' => false],
-                            ['name' => 'Form Layout', 'path' => '/form-layout', 'pro' => false],
-                        ],
-                    ],
-                    [
-                        'icon' => 'table-icon',
-                        'name' => 'Tables',
-                        'subItems' => [
-                            ['name' => 'Basic Tables', 'path' => '/basic-tables', 'pro' => false],
-                            ['name' => 'Data Tables', 'path' => '/data-tables', 'pro' => false],
-                        ],
-                    ],
-                    [
-                        'icon' => 'page-icon',
-                        'name' => 'Pages',
-                        'subItems' => [
-                            ['name' => 'File Manager', 'path' => '/file-manager', 'pro' => false],
-                            ['name' => 'Pricing Tables', 'path' => '/pricing-tables', 'pro' => false],
-                            ['name' => 'Faqs', 'path' => '/faq', 'pro' => false],
-                            ['name' => 'API Keys', 'path' => '/api-keys', 'new' => true],
-                            ['name' => 'Integrations', 'path' => '/integrations', 'new' => true],
-                            ['name' => 'Blank Page', 'path' => '/blank', 'pro' => false],
-                            ['name' => '404 Error', 'path' => '/error-404', 'pro' => false],
-                            ['name' => '500 Error', 'path' => '/error-500', 'pro' => false],
-                            ['name' => '503 Error', 'path' => '/error-503', 'pro' => false],
-                            ['name' => 'Coming Soon', 'path' => '/coming-soon', 'pro' => false],
-                            ['name' => 'Maintenance', 'path' => '/maintenance', 'pro' => false],
-                            ['name' => 'Success', 'path' => '/success', 'pro' => false],
-                        ],
-                    ],
-                ],
+                'title' => 'Library',
+                'items' => $this->libraryMenu($user),
             ],
             [
-                'title' => 'Support',
-                'items' => [
-                    [
-                        'icon' => 'chat-icon',
-                        'name' => 'Chat',
-                        'path' => '/chat',
-                    ],
-                    [
-                        'icon' => 'call-icon',
-                        'name' => 'Support Ticket',
-                        'new' => true,
-                        'subItems' => [
-                            ['name' => 'Ticket List', 'path' => '/support-tickets'],
-                            ['name' => 'Ticket Reply', 'path' => '/support-ticket-reply'],
-                        ],
-                    ],
-                    [
-                        'icon' => 'mail-icon',
-                        'name' => 'Email',
-                        'subItems' => [
-                            ['name' => 'Inbox', 'path' => '/inbox', 'pro' => false],
-                            ['name' => 'Details', 'path' => '/inbox-details', 'pro' => false],
-                        ],
-                    ],
-                ],
+                'title' => 'Circulation',
+                'items' => $this->circulationMenu($user),
             ],
             [
-                'title' => 'Others',
-                'items' => [
-                    [
-                        'icon' => 'pie-chart-icon',
-                        'name' => 'Charts',
-                        'subItems' => [
-                            ['name' => 'Line Chart', 'path' => '/line-chart', 'pro' => false],
-                            ['name' => 'Bar Chart', 'path' => '/bar-chart', 'pro' => false],
-                            ['name' => 'Pie Chart', 'path' => '/pie-chart', 'pro' => false],
-                        ],
-                    ],
-                    [
-                        'icon' => 'box-cube-icon',
-                        'name' => 'UI Elements',
-                        'subItems' => [
-                            ['name' => 'Alerts', 'path' => '/alerts', 'pro' => false],
-                            ['name' => 'Avatar', 'path' => '/avatars', 'pro' => false],
-                            ['name' => 'Badge', 'path' => '/badge', 'pro' => false],
-                            ['name' => 'Breadcrumb', 'path' => '/breadcrumb', 'pro' => false],
-                            ['name' => 'Buttons', 'path' => '/buttons', 'pro' => false],
-                            ['name' => 'Buttons Group', 'path' => '/buttons-group', 'pro' => false],
-                            ['name' => 'Cards', 'path' => '/cards', 'pro' => false],
-                            ['name' => 'Carousel', 'path' => '/carousel', 'pro' => false],
-                            ['name' => 'Dropdowns', 'path' => '/dropdowns', 'pro' => false],
-                            ['name' => 'Images', 'path' => '/image', 'pro' => false],
-                            ['name' => 'Links', 'path' => '/links', 'pro' => false],
-                            ['name' => 'List', 'path' => '/list', 'pro' => false],
-                            ['name' => 'Modals', 'path' => '/modals', 'pro' => false],
-                            ['name' => 'Notification', 'path' => '/notifications', 'pro' => false],
-                            ['name' => 'Pagination', 'path' => '/pagination', 'pro' => false],
-                            ['name' => 'Popovers', 'path' => '/popovers', 'pro' => false],
-                            ['name' => 'Progressbar', 'path' => '/progress-bar', 'pro' => false],
-                            ['name' => 'Ribbons', 'path' => '/ribbons', 'pro' => false],
-                            ['name' => 'Spinners', 'path' => '/spinners', 'pro' => false],
-                            ['name' => 'Tabs', 'path' => '/tabs', 'pro' => false],
-                            ['name' => 'Tooltips', 'path' => '/tooltips', 'pro' => false],
-                            ['name' => 'Videos', 'path' => '/videos', 'pro' => false],
-                        ],
-                    ],
-                    [
-                        'icon' => 'plug-in-icon',
-                        'name' => 'Authentication',
-                        'subItems' => [
-                            ['name' => 'Sign In', 'path' => '/signin', 'pro' => false],
-                            ['name' => 'Sign Up', 'path' => '/signup', 'pro' => false],
-                            ['name' => 'Reset Password', 'path' => '/reset-password', 'pro' => false],
-                            ['name' => 'Two Step Verification', 'path' => '/two-step-verification', 'pro' => false],
-                        ],
-                    ],
-                ],
+                'title' => 'Access Control',
+                'items' => $this->accessMenu($user),
+            ],
+            [
+                'title' => 'System',
+                'items' => $this->systemMenu($user),
             ],
         ];
 
+        // Remove empty groups
+        $menuGroups = array_values(array_filter($menuGroups, fn ($g) => ! empty($g['items'])));
+
         return view('admin.components.sidebar', compact('menuGroups'));
+    }
+
+    /* ------------------------------------------------------------------ */
+    /* Library group                                                       */
+    /* ------------------------------------------------------------------ */
+    private function libraryMenu($user): array
+    {
+        $items = [];
+
+        // Dashboard
+        if ($user->can('dashboard.view')) {
+            $items[] = [
+                'icon' => 'grid-icon',
+                'name' => 'Dashboard',
+                'path' => route('admin.dashboard'),
+                'active' => request()->routeIs('admin.dashboard'),
+            ];
+        }
+
+        // Catalog (Books, Authors, Categories, Publishers, E-book Files)
+        $catalogChildren = [];
+
+        if ($user->can('books.view')) {
+            $catalogChildren[] = [
+                'name'   => 'Books',
+                'path'   => route('admin.books.index'),
+                'active' => request()->routeIs('admin.books.*'),
+            ];
+        }
+        if ($user->can('authors.view')) {
+            $catalogChildren[] = [
+                'name'   => 'Authors',
+                'path'   => route('admin.authors.index'),
+                'active' => request()->routeIs('admin.authors.*'),
+            ];
+        }
+        if ($user->can('categories.view')) {
+            $catalogChildren[] = [
+                'name'   => 'Categories',
+                'path'   => route('admin.categories.index'),
+                'active' => request()->routeIs('admin.categories.*'),
+            ];
+        }
+        if ($user->can('publishers.view')) {
+            $catalogChildren[] = [
+                'name'   => 'Publishers',
+                'path'   => route('admin.publishers.index'),
+                'active' => request()->routeIs('admin.publishers.*'),
+            ];
+        }
+        if ($user->can('ebook-files.view')) {
+            $catalogChildren[] = [
+                'name'   => 'E-book Files',
+                'path'   => route('admin.ebook-files.index'),
+                'active' => request()->routeIs('admin.ebook-files.*'),
+            ];
+        }
+
+        if (! empty($catalogChildren)) {
+            $items[] = [
+                'icon'     => 'book-icon',
+                'name'     => 'Catalog',
+                'subItems' => $catalogChildren,
+            ];
+        }
+
+        return $items;
+    }
+
+    /* ------------------------------------------------------------------ */
+    /* Circulation group                                                   */
+    /* ------------------------------------------------------------------ */
+    private function circulationMenu($user): array
+    {
+        $items = [];
+
+        if ($user->can('borrowings.view')) {
+            $items[] = [
+                'icon'     => 'swap-icon',
+                'name'     => 'Borrowings',
+                'subItems' => array_values(array_filter([
+                    $user->can('borrowings.view') ? [
+                        'name'   => 'All Borrowings',
+                        'path'   => route('admin.borrowings.index'),
+                        'active' => request()->routeIs('admin.borrowings.index'),
+                    ] : null,
+                    $user->can('borrowings.approve') ? [
+                        'name'   => 'Pending Approvals',
+                        'path'   => route('admin.borrowings.pending'),
+                        'active' => request()->routeIs('admin.borrowings.pending'),
+                    ] : null,
+                ])),
+            ];
+        }
+
+        if ($user->can('reviews.view')) {
+            $items[] = [
+                'icon'   => 'star-icon',
+                'name'   => 'Reviews',
+                'path'   => route('admin.reviews.index'),
+                'active' => request()->routeIs('admin.reviews.*'),
+            ];
+        }
+
+        return $items;
+    }
+
+    /* ------------------------------------------------------------------ */
+    /* Access Control group                                                */
+    /* ------------------------------------------------------------------ */
+    private function accessMenu($user): array
+    {
+        $children = [];
+
+        if ($user->can('users.view')) {
+            $children[] = [
+                'name'   => 'Users',
+                'path'   => route('admin.users.index'),
+                'active' => request()->routeIs('admin.users.*'),
+            ];
+        }
+        if ($user->can('roles.view')) {
+            $children[] = [
+                'name'   => 'Roles',
+                'path'   => route('admin.roles.index'),
+                'active' => request()->routeIs('admin.roles.*'),
+            ];
+        }
+        if ($user->can('permissions.view')) {
+            $children[] = [
+                'name'   => 'Permissions',
+                'path'   => route('admin.permissions.index'),
+                'active' => request()->routeIs('admin.permissions.*'),
+            ];
+        }
+
+        if (empty($children)) {
+            return [];
+        }
+
+        return [[
+            'icon'     => 'shield-icon',
+            'name'     => 'Roles & Permissions',
+            'subItems' => $children,
+        ]];
+    }
+
+    /* ------------------------------------------------------------------ */
+    /* System group                                                        */
+    /* ------------------------------------------------------------------ */
+    private function systemMenu($user): array
+    {
+        $items = [];
+
+        if ($user->can('reports.view')) {
+            $items[] = [
+                'icon'   => 'chart-icon',
+                'name'   => 'Reports',
+                'path'   => route('admin.reports.index'),
+                'active' => request()->routeIs('admin.reports.*'),
+            ];
+        }
+
+        if ($user->can('audit-logs.view')) {
+            $items[] = [
+                'icon'   => 'list-icon',
+                'name'   => 'Audit Logs',
+                'path'   => route('admin.audit-logs.index'),
+                'active' => request()->routeIs('admin.audit-logs.*'),
+            ];
+        }
+
+        // Profile — always visible to logged-in admin
+        $items[] = [
+            'icon'   => 'user-circle-icon',
+            'name'   => 'Profile',
+            'path'   => route('admin.profile.edit'),
+            'active' => request()->routeIs('admin.profile.*'),
+        ];
+
+        return $items;
     }
 }

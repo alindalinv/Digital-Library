@@ -2,13 +2,16 @@
 
 namespace App\Http\Controllers\Frontend;
 
+use App\Http\Controllers\Controller;
 use App\Http\Requests\ProfileUpdateRequest;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Redirect;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\View\View;
-use App\Http\Controllers\Controller;
+
 class ProfileController extends Controller
 {
     /**
@@ -21,25 +24,90 @@ class ProfileController extends Controller
         ]);
     }
 
-    /**
-     * Update the user's profile information.
-     */
+    /* -----------------------------------------------------------------
+     |  Update: Personal Information (name, email, phone, bio, etc.)
+     | ----------------------------------------------------------------- */
+
     public function update(ProfileUpdateRequest $request): RedirectResponse
     {
-        $request->user()->fill($request->validated());
+        $user = $request->user();
+        $validated = $request->validated();
 
-        if ($request->user()->isDirty('email')) {
-            $request->user()->email_verified_at = null;
+        // Handle photo upload
+        if ($request->hasFile('photo')) {
+            // Delete old photo if exists
+            if ($user->photo && Storage::disk('public')->exists($user->photo)) {
+                Storage::disk('public')->delete($user->photo);
+            }
+
+            $validated['photo'] = $request->file('photo')
+                ->store('avatars', 'public');
         }
 
-        $request->user()->save();
+        $user->fill($validated);
 
-        return Redirect::route('profile.edit')->with('status', 'profile-updated');
+        // Reset email verification if email changed
+        if ($user->isDirty('email')) {
+            $user->email_verified_at = null;
+        }
+
+        $user->save();
+
+        return Redirect::route('profile.edit')
+            ->with('status', 'profile-updated')
+            ->with('success', 'Profile updated successfully.');
     }
 
-    /**
-     * Delete the user's account.
-     */
+    /* -----------------------------------------------------------------
+     |  Update: Social Links
+     | ----------------------------------------------------------------- */
+
+    public function updateSocial(Request $request): RedirectResponse
+    {
+        $validated = $request->validate([
+            'facebook' => ['nullable', 'url', 'max:255'],
+            'twitter' => ['nullable', 'url', 'max:255'],
+            'linkedin' => ['nullable', 'url', 'max:255'],
+            'instagram' => ['nullable', 'url', 'max:255'],
+        ]);
+
+        // Convert empty strings to null
+        $validated = array_map(
+            fn($value) => $value ?: null,
+            $validated
+        );
+
+        $request->user()->update($validated);
+
+        return Redirect::route('profile.edit')
+            ->with('status', 'social-updated')
+            ->with('success', 'Social links updated successfully.');
+    }
+
+    /* -----------------------------------------------------------------
+     |  Update: Password
+     | ----------------------------------------------------------------- */
+
+    public function updatePassword(Request $request): RedirectResponse
+    {
+        $validated = $request->validateWithBag('updatePassword', [
+            'current_password' => ['required', 'current_password'],
+            'password' => ['required', 'string', 'min:8', 'confirmed'],
+        ]);
+
+        $request->user()->forceFill([
+            'password' => Hash::make($validated['password']),
+        ])->save();
+
+        return Redirect::route('profile.edit')
+            ->with('status', 'password-updated')
+            ->with('success', 'Password updated successfully.');
+    }
+
+    /* -----------------------------------------------------------------
+     |  Delete: Account
+     | ----------------------------------------------------------------- */
+
     public function destroy(Request $request): RedirectResponse
     {
         $request->validateWithBag('userDeletion', [
@@ -48,6 +116,11 @@ class ProfileController extends Controller
 
         $user = $request->user();
 
+        // Delete profile photo
+        if ($user->photo && Storage::disk('public')->exists($user->photo)) {
+            Storage::disk('public')->delete($user->photo);
+        }
+
         Auth::logout();
 
         $user->delete();
@@ -55,6 +128,8 @@ class ProfileController extends Controller
         $request->session()->invalidate();
         $request->session()->regenerateToken();
 
-        return Redirect::to('/');
+        return Redirect::to('/')
+            ->with('status', 'account-deleted')
+            ->with('success', 'Your account has been deleted. We\'re sorry to see you go!');
     }
 }

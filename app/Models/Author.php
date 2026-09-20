@@ -34,8 +34,12 @@ class Author extends Model
         });
     }
 
+    /**
+     * Books written by this author.
+     */
     public function books(): BelongsToMany
     {
-        return $this->belongsToMany(Book::class)->withTimestamps();
+        return $this->belongsToMany(Book::class, 'author_book')
+            ->withTimestamps();
     }
 }

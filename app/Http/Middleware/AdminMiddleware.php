@@ -4,36 +4,34 @@ namespace App\Http\Middleware;
 
 use Closure;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Symfony\Component\HttpFoundation\Response;
 
 class AdminMiddleware
 {
-    public function handle(
-        Request $request,
-        Closure $next
-    ): Response {
-
-        // Not logged in
-        if (! $request->user()) {
-            return redirect()->route('login');
+    public function handle(Request $request, Closure $next): Response
+    {
+        // 1. Not logged in → redirect to admin login
+        if (! Auth::check()) {
+            return redirect()->route('admin.login');
         }
 
-        $user = $request->user();
+        $user = Auth::user();
 
-        // Account disabled
-        if (! $user->status) {
-            auth()->logout();
+        // 2. Account disabled → logout + redirect with error
+        if ((int) $user->status !== 1) {
+            Auth::logout();
+            $request->session()->invalidate();
+            $request->session()->regenerateToken();
 
             return redirect()
-                ->route('login')
-                ->withErrors([
-                    'email' => 'Your account has been disabled.',
-                ]);
+                ->route('admin.login')
+                ->withErrors(['email' => 'Your account has been disabled.']);
         }
 
-        // Not an admin
+        // 3. Not an admin → 403
         if (! $user->can('admin.access')) {
-            abort(403);
+            abort(403, 'You do not have admin access.');
         }
 
         return $next($request);
