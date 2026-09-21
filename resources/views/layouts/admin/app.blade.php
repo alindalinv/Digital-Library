@@ -143,6 +143,8 @@
             }
         })();
     </script>
+    <!-- TinyMCE -->
+    <script src="https://cdn.jsdelivr.net/npm/tinymce@7/tinymce.min.js" referrerpolicy="origin"></script>
 </head>
 
 <body x-data="{ 'loaded': true}" x-init="$store.sidebar.isExpanded = window.innerWidth >= 1280;
@@ -177,6 +179,8 @@
              dark:bg-gray-900 dark:text-gray-200
              transition-colors duration-200">
                 <div class="p-4 mx-auto max-w-(--breakpoint-2xl) md:p-6">
+                    {{-- Flash messages (visible on every page) --}}
+                    @include('admin.partials.flash')
                     @yield('content')
                 </div>
             </main>

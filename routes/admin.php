@@ -71,10 +71,14 @@ Route::middleware(['auth', 'admin'])
         Route::resource('categories', CategoryController::class);
 
         /* ---------------- Books ---------------- */
-        Route::get('books/trashed', [BookController::class, 'trashed'])
-            ->name('books.trashed');
-        Route::post('books/{id}/restore', [BookController::class, 'restore'])
-            ->name('books.restore');
+        // Trashed routes — must come BEFORE the resource route
+        Route::post('books/upload-image', [BookController::class, 'uploadImage'])
+            ->name('books.upload-image');
+        Route::get('books/trashed', [BookController::class, 'trashed'])->name('books.trashed');
+        Route::post('books/{id}/restore', [BookController::class, 'restore'])->name('books.restore');
+        Route::delete('books/{id}/force-delete', [BookController::class, 'forceDelete'])->name('books.force-delete');
+
+        // Resource routes (register AFTER trashed to avoid conflicts)
         Route::resource('books', BookController::class);
 
         /* ---------------- Authors ---------------- */
