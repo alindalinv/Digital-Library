@@ -33,8 +33,8 @@ class Book extends Model
     ];
 
     protected $casts = [
-        'is_featured'    => 'boolean',
-        'price'          => 'decimal:2',
+        'is_featured' => 'boolean',
+        'price' => 'decimal:2',
         'published_year' => 'integer',
     ];
 
@@ -93,6 +93,13 @@ class Book extends Model
 
     public function scopeFeatured(Builder $query): Builder
     {
-        return $query->where('is_featured', true);
+        return $query->where('is_featured', true)->where('status', 'published');
+    }
+
+    public function getCoverUrlAttribute(): ?string
+    {
+        return $this->cover_image
+            ? \Storage::disk('public')->url($this->cover_image)
+            : null;
     }
 }
