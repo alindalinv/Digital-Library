@@ -316,6 +316,22 @@
                 </div>
 
 
+                {{-- E-book Files --}}
+                <div class="rounded-xl border border-gray-200 p-4 dark:border-gray-800">
+                    <div class="mb-3 flex items-center justify-between gap-3">
+                        <h4 class="text-sm font-semibold text-gray-800 dark:text-white/90">E-book Files</h4>
+                        <a href="{{ route('admin.ebook-files.create', ['book_id' => $book->id]) }}" class="text-xs font-medium text-brand-500 hover:text-brand-600">Add file</a>
+                    </div>
+                    @forelse ($book->files as $file)
+                        <div class="flex items-center justify-between gap-3 border-t border-gray-100 py-2 first:border-0 first:pt-0 dark:border-gray-800">
+                            <div><p class="text-sm font-medium text-gray-700 dark:text-gray-300">{{ strtoupper($file->file_type) }} @if($file->is_primary)<span class="ml-1 text-xs text-green-600">Primary</span>@endif</p><p class="text-xs text-gray-500">{{ number_format(($file->file_size ?? 0) / 1048576, 2) }} MB</p></div>
+                            <a href="{{ route('admin.ebook-files.show', $file) }}" class="text-xs text-brand-500 hover:text-brand-600">Open</a>
+                        </div>
+                    @empty
+                        <p class="text-sm text-gray-500 dark:text-gray-400">No e-book files yet.</p>
+                    @endforelse
+                </div>
+
                 {{-- Metadata --}}
                 <div class="rounded-xl border border-gray-200 p-4 dark:border-gray-800">
                     <h4 class="mb-4 text-sm font-semibold text-gray-800 dark:text-white/90">

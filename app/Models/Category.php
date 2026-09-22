@@ -19,6 +19,11 @@ class Category extends Model
         'description',
         'parent_id',
         'order',
+        'status',
+    ];
+
+    protected $casts = [
+        'status' => 'boolean',
     ];
 
     protected static function booted(): void

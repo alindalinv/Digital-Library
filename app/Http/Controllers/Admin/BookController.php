@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Author;
 use App\Models\Book;
 use App\Models\Category;
+use App\Models\EbookFile;
 use App\Models\Publisher;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -108,7 +109,7 @@ class BookController extends Controller
             ? Purifier::clean($validated['description'])
             : null;
         $authorIds = $validated['authors'] ?? [];
-        unset($validated['authors']);
+        unset($validated['authors'], $validated['ebook_file']);
 
         $book = DB::transaction(function () use ($request, $validated, $authorIds) {
             if ($request->hasFile('cover_image')) {
@@ -117,12 +118,15 @@ class BookController extends Controller
 
             $book = Book::create($validated);
             $book->authors()->sync($authorIds);
+            $this->storeEbookFiles($book, $request->hasFile('ebook_file')
+                ? [$request->file('ebook_file')]
+                : []);
 
             return $book;
         });
 
         return redirect()
-            ->route('admin.books.index')
+            ->route('admin.books.show', $book)
             ->with('success', 'Book created successfully.');
     }
 
@@ -138,7 +142,7 @@ class BookController extends Controller
 
     public function edit(Book $book): View
     {
-        $book->load('authors');
+        $book->load(['authors', 'files']);
 
         return view('admin.pages.books.edit', [
             'title' => "Edit Book: {$book->title}",
@@ -161,7 +165,7 @@ class BookController extends Controller
             ? Purifier::clean($validated['description'])
             : null;
         $authorIds = $validated['authors'] ?? [];
-        unset($validated['authors']);
+        unset($validated['authors'], $validated['ebook_file']);
 
         DB::transaction(function () use ($request, $validated, $authorIds, $book) {
             if ($request->hasFile('cover_image')) {
@@ -170,10 +174,13 @@ class BookController extends Controller
 
             $book->update($validated);
             $book->authors()->sync($authorIds);
+            $this->storeEbookFiles($book, $request->hasFile('ebook_file')
+                ? [$request->file('ebook_file')]
+                : []);
         });
 
         return redirect()
-            ->route('admin.books.index')
+            ->route('admin.books.show', $book)
             ->with('success', 'Book updated successfully.');
     }
 
@@ -245,6 +252,7 @@ class BookController extends Controller
             ],
             'description' => ['nullable', 'string'],
             'cover_image' => ['nullable', 'image', 'mimes:jpg,jpeg,png,webp', 'max:2048'],
+            'ebook_file' => ['nullable', 'file', 'mimes:pdf,epub,mobi', 'max:51200'],
             'category_id' => ['required', 'exists:categories,id'],
             'publisher_id' => ['nullable', 'exists:publishers,id'],
             'published_year' => ['nullable', 'integer', 'min:1000', 'max:' . (date('Y') + 1)],
@@ -257,6 +265,23 @@ class BookController extends Controller
             'authors' => ['nullable', 'array'],
             'authors.*' => ['exists:authors,id'],
         ];
+    }
+
+    protected function storeEbookFiles(Book $book, array $files): void
+    {
+        $hasPrimary = $book->files()->where('is_primary', true)->exists();
+
+        foreach ($files as $file) {
+            EbookFile::create([
+                'book_id' => $book->id,
+                'file_path' => $file->store('ebooks', 'public'),
+                'file_type' => strtolower($file->getClientOriginalExtension()),
+                'file_size' => $file->getSize(),
+                'is_primary' => ! $hasPrimary,
+            ]);
+
+            $hasPrimary = true;
+        }
     }
 
     protected function handleCoverUpload(Request $request, ?Book $book = null): string

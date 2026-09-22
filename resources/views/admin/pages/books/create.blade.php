@@ -82,6 +82,14 @@
 
             @csrf
 
+            <div class="mb-6 rounded-xl border border-dashed border-brand-300 bg-brand-50/40 p-4 dark:border-brand-500/40 dark:bg-brand-500/5">
+                <label for="ebook_file" class="mb-1 block text-sm font-semibold text-gray-800 dark:text-white">E-book file <span class="font-normal text-gray-500">(optional)</span></label>
+                <input id="ebook_file" name="ebook_file" type="file" accept=".pdf,.epub,.mobi"
+                    class="block w-full text-sm text-gray-600 dark:text-gray-300">
+                <p class="mt-1 text-xs text-gray-500">Choose a PDF, EPUB, or MOBI file. It will be the primary e-book.</p>
+                @error('ebook_file') <p class="mt-1 text-xs text-red-500">{{ $message }}</p> @enderror
+            </div>
+
             <div class="grid grid-cols-1 gap-6 lg:grid-cols-3">
 
                 {{-- =================================================
@@ -777,8 +785,6 @@ document.addEventListener('DOMContentLoaded', () => {
          * Image upload (optional — see next section)
          * --------------------------------------------------- */
         automatic_uploads: true,
-        images_upload_url: '{{ route("admin.books.upload-image") }}',
-        images_upload_credentials: true,
         images_upload_handler: (blobInfo) => new Promise((resolve, reject) => {
             const formData = new FormData();
             formData.append('file', blobInfo.blob(), blobInfo.filename());
@@ -835,6 +841,12 @@ document.addEventListener('DOMContentLoaded', () => {
             editor.on('init', () => {
                 // Ensure the underlying textarea stays in sync for native validation
                 editor.save();
+
+                // The form may be submitted before a change event fires (for
+                // example, when using a toolbar command). Save one last time.
+                editor.getElement().form?.addEventListener('submit', () => {
+                    tinymce.triggerSave();
+                });
             });
 
             // Mark form dirty when content changes (integrates with your beforeunload)
