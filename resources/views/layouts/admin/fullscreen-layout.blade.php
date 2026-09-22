@@ -105,7 +105,7 @@ const checkMobile = () => {
 window.addEventListener('resize', checkMobile);">
 
     {{-- preloader --}}
-    <x-common.preloader/>
+    <x-admin.common.preloader/>
     {{-- preloader end --}}
 
     @yield('content')

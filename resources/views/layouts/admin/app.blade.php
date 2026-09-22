@@ -160,7 +160,7 @@
     window.addEventListener('resize', checkMobile);">
 
     {{-- preloader --}}
-    <x-common.preloader />
+    <x-admin.common.preloader />
     {{-- preloader end --}}
 
     <div class="min-h-screen xl:flex">
