@@ -68,10 +68,10 @@ return [
             'driver' => 'eloquent',
             'model' => env('AUTH_MODEL', App\Models\User::class),
         ],
-        'admins' => [
-            'driver' => 'eloquent',
-            'model' => App\Models\User::class,   // or reuse User::class
-        ],
+        // 'admins' => [
+        //     'driver' => 'eloquent',
+        //     'model' => App\Models\User::class,   // or reuse User::class
+        // ],
 
         // 'users' => [
         //     'driver' => 'database',

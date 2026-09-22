@@ -19,7 +19,7 @@ use Illuminate\Support\Facades\Route;
 
 /*
 |--------------------------------------------------------------------------
-| Admin Authentication (Guest)
+| Admin Authentication (Guest — admin guard only)
 |--------------------------------------------------------------------------
 */
 
@@ -31,16 +31,16 @@ Route::middleware('guest:admin')->group(function () {
 });
 
 Route::post('/logout', [AuthenticatedSessionController::class, 'destroy'])
-    ->middleware('auth')
+    ->middleware('admin')
     ->name('admin.logout');
 
 /*
 |--------------------------------------------------------------------------
-| Admin Panel (Authenticated + Admin)
+| Admin Panel (admin guard only — no web 'auth')
 |--------------------------------------------------------------------------
 */
 
-Route::middleware(['auth', 'admin'])
+Route::middleware('admin')
     ->name('admin.')
     ->group(function () {
 
@@ -51,34 +51,24 @@ Route::middleware(['auth', 'admin'])
         /* ---------------- Profile ---------------- */
         Route::get('/profile', [ProfileController::class, 'edit'])
             ->name('profile.edit');
-
-        // Personal info modal
         Route::patch('/profile', [ProfileController::class, 'update'])
             ->name('profile.update');
-
-        // Header modal
         Route::patch('/profile/header', [ProfileController::class, 'updateHeader'])
             ->name('profile.header.update');
-
-        // Password
         Route::put('/profile/password', [ProfileController::class, 'updatePassword'])
             ->name('profile.password.update');
-
-        // Delete account
         Route::delete('/profile', [ProfileController::class, 'destroy'])
             ->name('profile.destroy');
+
         /* ---------------- Categories ---------------- */
         Route::resource('categories', CategoryController::class);
 
         /* ---------------- Books ---------------- */
-        // Trashed routes — must come BEFORE the resource route
         Route::post('books/upload-image', [BookController::class, 'uploadImage'])
             ->name('books.upload-image');
         Route::get('books/trashed', [BookController::class, 'trashed'])->name('books.trashed');
         Route::post('books/{id}/restore', [BookController::class, 'restore'])->name('books.restore');
         Route::delete('books/{id}/force-delete', [BookController::class, 'forceDelete'])->name('books.force-delete');
-
-        // Resource routes (register AFTER trashed to avoid conflicts)
         Route::resource('books', BookController::class);
 
         /* ---------------- Authors ---------------- */
@@ -110,7 +100,6 @@ Route::middleware(['auth', 'admin'])
         Route::resource('permissions', PermissionController::class);
 
         /* ---------------- Users ---------------- */
-        // Custom routes MUST come before the resource
         Route::get('users/{user}/roles', [UserController::class, 'editRoles'])
             ->name('users.roles.edit');
         Route::put('users/{user}/roles', [UserController::class, 'updateRoles'])
