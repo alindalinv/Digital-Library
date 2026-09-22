@@ -6,7 +6,7 @@
         </h3>
 
         <!-- Dropdown Menu -->
-        <x-common.dropdown-menu />
+        <x-admin.common.dropdown-menu />
         <!-- End Dropdown Menu -->
     </div>
 

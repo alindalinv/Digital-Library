@@ -127,11 +127,11 @@
                 </button>
 
                 <!-- Notification Dropdown -->
-                <x-header.notification-dropdown />
+                <x-admin.header.notification-dropdown />
             </div>
 
             <!-- User Dropdown -->
-            <x-header.user-dropdown />
+            <x-admin.header.user-dropdown />
         </div>
     </div>
 </header>

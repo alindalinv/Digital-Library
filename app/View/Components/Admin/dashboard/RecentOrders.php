@@ -21,6 +21,6 @@ class RecentOrders extends Component
      */
     public function render(): View|Closure|string
     {
-        return view('components.admin.ecommerce.recent-orders');
+        return view('components.admin.dashboard.recent-orders');
     }
 }

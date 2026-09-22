@@ -15,6 +15,6 @@ class MonthlySale extends Component
 
     public function render(): View|Closure|string
     {
-        return view('components.admin.ecommerce.monthly-sale');
+        return view('components.admin.dashboard.monthly-sale');
     }
 }
