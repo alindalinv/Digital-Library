@@ -53,7 +53,9 @@
                                         $statusClass = match($borrowing->status) { 'approved' => 'bg-success-subtle text-success-emphasis', 'rejected' => 'bg-danger-subtle text-danger-emphasis', 'returned' => 'bg-secondary-subtle text-secondary-emphasis', default => 'bg-warning-subtle text-warning-emphasis' };
                                     @endphp
                                     <tr class="borrowing-row">
-                                        <td class="ps-4"><div class="d-flex align-items-center gap-3"><img src="{{ $borrowing->book->cover_url ?: asset('assets/frontend/images/default-book.png') }}" alt="{{ $borrowing->book->title }}" class="borrowing-cover rounded shadow-sm"><div class="min-w-0"><a href="{{ route('books.show', $borrowing->book->slug) }}" class="fw-semibold text-dark text-decoration-none">{{ $borrowing->book->title }}</a><div class="small text-secondary">{{ $borrowing->book->authors->pluck('name')->join(', ') }}</div></div></div></td>
+                                        <td class="ps-4"><div class="d-flex align-items-center gap-3">@if ($borrowing->book->cover_url)
+                                        <img src="{{ $borrowing->book->cover_url}}" alt="{{ $borrowing->book->title }}" class="borrowing-cover rounded shadow-sm">
+                                        @endif<div class="min-w-0"><a href="{{ route('books.show', $borrowing->book->slug) }}" class="fw-semibold text-dark text-decoration-none">{{ $borrowing->book->title }}</a><div class="small text-secondary">{{ $borrowing->book->authors->pluck('name')->join(', ') }}</div></div></div></td>
                                         <td><span class="badge {{ $isOverdue ? 'bg-danger-subtle text-danger-emphasis' : $statusClass }}">{{ $isOverdue ? 'Overdue' : ucfirst($borrowing->status) }}</span></td>
                                         <td class="small text-secondary">{{ $borrowing->borrowed_at?->format('M d, Y') ?? '—' }}</td>
                                         <td class="small {{ $isOverdue ? 'text-danger fw-semibold' : 'text-secondary' }}">{{ $borrowing->returned_at ? 'Returned' : ($borrowing->due_at?->format('M d, Y') ?? '—') }}</td>
