@@ -12,7 +12,6 @@ use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
-use Illuminate\Support\Str;
 use Illuminate\Validation\Rule;
 use Illuminate\View\View;
 use Illuminate\Http\JsonResponse;
@@ -103,7 +102,6 @@ class BookController extends Controller
     public function store(Request $request): RedirectResponse
     {
         $validated = $request->validate($this->rules());
-        $validated['slug'] = $this->uniqueSlug($validated['slug'] ?? $validated['title']);
         $validated['is_featured'] = $request->boolean('is_featured');
         $validated['description'] = $validated['description']
             ? Purifier::clean($validated['description'])
@@ -156,10 +154,7 @@ class BookController extends Controller
     public function update(Request $request, Book $book): RedirectResponse
     {
         $validated = $request->validate($this->rules($book));
-        $validated['slug'] = $this->uniqueSlug(
-            $validated['slug'] ?? $validated['title'],
-            $book->id
-        );
+        unset($validated['slug']);
         $validated['is_featured'] = $request->boolean('is_featured');
         $validated['description'] = $validated['description']
             ? Purifier::clean($validated['description'])
@@ -293,24 +288,6 @@ class BookController extends Controller
         return $request->file('cover_image')->store('books/covers', 'public');
     }
 
-    protected function uniqueSlug(string $value, ?int $ignoreId = null): string
-    {
-        $base = Str::slug($value);
-        $slug = $base;
-        $i = 2;
-
-        while (
-            Book::withTrashed()
-                ->where('slug', $slug)
-                ->when($ignoreId, fn($q) => $q->where('id', '!=', $ignoreId))
-                ->exists()
-        ) {
-            $slug = "{$base}-{$i}";
-            $i++;
-        }
-
-        return $slug;
-    }
     public function uploadImage(Request $request): JsonResponse
     {
         $request->validate([

@@ -42,8 +42,12 @@ class Book extends Model
     {
         static::creating(function (Book $book) {
             if (empty($book->slug)) {
-                $book->slug = Str::slug($book->title) . '-' . Str::random(4);
+                $book->slug = 'pending-' . Str::uuid();
             }
+        });
+
+        static::created(function (Book $book) {
+            $book->updateQuietly(['slug' => "book-{$book->id}"]);
         });
     }
 
