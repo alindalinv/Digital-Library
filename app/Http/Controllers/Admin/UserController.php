@@ -77,9 +77,11 @@ class UserController extends Controller
             'roles.*'  => 'exists:roles,name',
         ]);
 
+        $status = $request->boolean('status') ? 1 : 0;
         $data['password'] = Hash::make($data['password']);
 
-        $user = User::create($data);
+        $user = User::create(collect($data)->except('status')->all());
+        $user->forceFill(['status' => $status])->save();
 
         if (! empty($data['roles'])) {
             $user->syncRoles($data['roles']);
@@ -118,10 +120,16 @@ class UserController extends Controller
             unset($data['password']);
         }
 
-        $user->update($data);
+        $roles = $data['roles'] ?? [];
+        unset($data['roles']);
 
-        if (isset($data['roles'])) {
-            $user->syncRoles($data['roles']);
+        $user->forceFill([
+            ...collect($data)->except('status')->all(),
+            'status' => $request->boolean('status') ? 1 : 0,
+        ])->save();
+
+        if ($request->has('roles')) {
+            $user->syncRoles($roles);
         }
 
         return redirect()->route('admin.users.index')
