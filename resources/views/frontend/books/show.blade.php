@@ -154,6 +154,22 @@
                                 </svg>
                                 Add to Cart
                             </button>
+
+                            @auth
+                                <form method="POST" action="{{ route('borrowings.store', $book) }}" class="d-inline">
+                                    @csrf
+                                    <button type="submit" class="btn btn-outline-primary btn-lg px-4">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16" class="me-1" aria-hidden="true">
+                                            <path d="M1 2.5A1.5 1.5 0 0 1 2.5 1h8A1.5 1.5 0 0 1 12 2.5V3h1.5A1.5 1.5 0 0 1 15 4.5v9a1.5 1.5 0 0 1-1.5 1.5h-8A1.5 1.5 0 0 1 4 13.5V13H2.5A1.5 1.5 0 0 1 1 11.5v-9ZM4 11.5v-9a.5.5 0 0 1 .5-.5h8a.5.5 0 0 1 .5.5v9a.5.5 0 0 1-.5.5h-8a.5.5 0 0 1-.5-.5Zm-2-9v9a.5.5 0 0 0 .5.5H4v-8A1.5 1.5 0 0 1 5.5 2H4.5v-.5a.5.5 0 0 0-.5-.5h-1a.5.5 0 0 0-.5.5Z"/>
+                                        </svg>
+                                        Borrow Book
+                                    </button>
+                                </form>
+                            @else
+                                <a href="{{ route('login') }}" class="btn btn-outline-primary btn-lg px-4">
+                                    Borrow Book
+                                </a>
+                            @endauth
                         @else
                             <button type="button" class="btn btn-secondary btn-lg px-4" disabled>
                                 Out of Stock

@@ -83,7 +83,7 @@ Route::middleware(['auth', 'verified'])
         Route::get('/borrowings', [BorrowingController::class, 'index'])
             ->name('borrowings.index');
 
-        Route::post('/borrowings/{book}', [BorrowingController::class, 'store'])
+        Route::post('/borrowings/{book}', [BorrowingController::class, 'borrowBook'])
             ->name('borrowings.store');
 
 

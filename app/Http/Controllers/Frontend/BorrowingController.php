@@ -5,7 +5,9 @@ namespace App\Http\Controllers\Frontend;
 use App\Http\Controllers\Controller;
 use App\Models\Book;
 use App\Models\Borrowing;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
 
 class BorrowingController extends Controller
@@ -20,25 +22,47 @@ class BorrowingController extends Controller
         return view('frontend.borrowings.index', compact('borrowings'));
     }
 
-    public function store(Request $request)
+    public function store(Request $request): RedirectResponse
     {
-        $data = $request->validate([
-            'book_id' => ['required', 'exists:books,id'],
-        ]);
+        $data = $request->validate(['book_id' => ['required', 'exists:books,id']]);
 
-        $book = Book::findOrFail($data['book_id']);
+        return $this->borrowBook(Book::findOrFail($data['book_id']));
+    }
 
-        if ($book->stock < 1) {
-            return back()->withErrors(['book_id' => 'This book is out of stock.']);
+    public function borrowBook(Book $book): RedirectResponse
+    {
+        abort_unless($book->status === 'published', 404);
+
+        $alreadyRequested = Borrowing::where('user_id', Auth::id())
+            ->where('book_id', $book->getKey())
+            ->whereIn('status', ['pending', 'approved', 'overdue'])
+            ->exists();
+
+        if ($alreadyRequested) {
+            return back()->withErrors(['book_id' => 'You already have an active borrowing request for this book.']);
         }
 
-        Borrowing::create([
-            'user_id'     => Auth::id(),
-            'book_id'     => $book->id,
-            'status'      => 'pending',
-            'borrowed_at' => now(),
-            'due_at'      => now()->addDays(14),
-        ]);
+        $created = DB::transaction(function () use ($book) {
+            $lockedBook = Book::whereKey($book->getKey())->lockForUpdate()->firstOrFail();
+
+            if ($lockedBook->stock < 1) {
+                return false;
+            }
+
+            Borrowing::create([
+                'user_id' => Auth::id(),
+                'book_id' => $lockedBook->getKey(),
+                'status' => 'pending',
+                'borrowed_at' => now(),
+                'due_at' => now()->addDays(14),
+            ]);
+
+            return true;
+        });
+
+        if (! $created) {
+            return back()->withErrors(['book_id' => 'This book is out of stock.']);
+        }
 
         return back()->with('success', 'Borrowing request submitted.');
     }
