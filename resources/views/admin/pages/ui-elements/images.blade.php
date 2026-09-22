@@ -19,7 +19,6 @@
 
 @section('content')
     {{-- Page Breadcrumb --}}
-    <x-admin.common.page-breadcrumb pageTitle="Images" />
 
     <div class="space-y-5 sm:space-y-6">
 

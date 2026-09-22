@@ -4,8 +4,10 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\User;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\View\View;
 use Spatie\Permission\Models\Role;
 
 class UserController extends Controller
@@ -22,10 +24,40 @@ class UserController extends Controller
     /* CRUD                                                                */
     /* ------------------------------------------------------------------ */
 
-    public function index()
+    public function index(Request $request): View|JsonResponse
     {
-        $users = User::with('roles')->latest()->paginate(15);
-        return view('admin.users.index', compact('users'));
+        $search = $request->string('search')->trim()->toString();
+        $status = $request->string('status', 'all')->toString();
+
+        if (! in_array($status, ['all', 'active', 'inactive'], true)) {
+            $status = 'all';
+        }
+
+        $users = User::with('roles')
+            ->when($search, fn ($query) => $query->where(function ($query) use ($search) {
+                $query->where('name', 'like', "%{$search}%")
+                    ->orWhere('email', 'like', "%{$search}%")
+                    ->orWhere('first_name', 'like', "%{$search}%")
+                    ->orWhere('last_name', 'like', "%{$search}%");
+            }))
+            ->when($status !== 'all', fn ($query) => $query->where('status', $status === 'active'))
+            ->latest()
+            ->paginate(15)
+            ->withQueryString();
+
+        if ($request->ajax() || $request->wantsJson()) {
+            return response()->json([
+                'html' => view('admin.users._results', compact('users'))->render(),
+                'total' => $users->total(),
+                'current_page' => $users->currentPage(),
+                'last_page' => $users->lastPage(),
+                'per_page' => $users->perPage(),
+                'next_page_url' => $users->nextPageUrl(),
+                'prev_page_url' => $users->previousPageUrl(),
+            ]);
+        }
+
+        return view('admin.users.index', compact('users', 'search', 'status') + ['title' => 'Users']);
     }
 
     public function create()

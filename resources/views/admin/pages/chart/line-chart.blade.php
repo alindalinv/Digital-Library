@@ -1,7 +1,6 @@
 @extends('layouts.admin.app')
 
 @section('content')
-    <x-admin.common.page-breadcrumb pageTitle="Line chart" />
     <div class="space-y-6">
         <x-admin.common.component-card title="Line chart 1">
             <!-- ====== Line Chart One Start -->

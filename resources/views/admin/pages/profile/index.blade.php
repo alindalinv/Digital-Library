@@ -9,7 +9,6 @@
          @open-profile-info-modal.window="openProfileInfoModal = true"
          @keydown.escape.window="openProfileHeaderModal = false; openProfileInfoModal = false">
 
-        <x-admin.common.page-breadcrumb pageTitle="User Profile" />
 
         <div class="rounded-2xl border border-gray-200 bg-white p-5 lg:p-6 dark:border-gray-800 dark:bg-gray-900">
             <h3 class="mb-5 text-lg font-semibold text-gray-800 lg:mb-7 dark:text-white/90">

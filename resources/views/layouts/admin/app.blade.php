@@ -179,6 +179,7 @@
              dark:bg-gray-900 dark:text-gray-200
              transition-colors duration-200">
                 <div class="p-4 mx-auto max-w-(--breakpoint-2xl) md:p-6">
+                    <x-admin.common.page-breadcrumb :pageTitle="$title ?? 'Page'" />
                     {{-- Flash messages (visible on every page) --}}
                     @include('admin.partials.flash')
                     @yield('content')

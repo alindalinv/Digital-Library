@@ -1,7 +1,6 @@
 @extends('layouts.admin.app')
 
 @section('content')
-    <x-admin.common.page-breadcrumb pageTitle="Edit Book" />
 
     @php
         // Reusable Tailwind class strings — single source of truth.

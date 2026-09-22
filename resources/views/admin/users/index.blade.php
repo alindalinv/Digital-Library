@@ -20,18 +20,19 @@
             @endcan
         </div>
 
-        {{-- Flash messages --}}
-        @if (session('success'))
-            <div class="mb-4 rounded-lg bg-green-50 px-4 py-3 text-sm text-green-700 dark:bg-green-500/10 dark:text-green-400">
-                {{ session('success') }}
-            </div>
-        @endif
-        @if (session('error'))
-            <div class="mb-4 rounded-lg bg-red-50 px-4 py-3 text-sm text-red-700 dark:bg-red-500/10 dark:text-red-400">
-                {{ session('error') }}
-            </div>
-        @endif
+        <form id="user-filters" method="GET" action="{{ route('admin.users.index') }}" class="mb-5 flex flex-col gap-3 sm:flex-row">
+            <label class="sr-only" for="user-search">Search users</label>
+            <input id="user-search" name="search" value="{{ $search ?? '' }}" placeholder="Search by name or email"
+                class="w-full max-w-md rounded-lg border border-gray-300 bg-transparent px-3 py-2 text-sm dark:border-gray-700 dark:text-white">
+            <label class="sr-only" for="user-status">Filter by status</label>
+            <select id="user-status" name="status" class="rounded-lg border border-gray-300 bg-transparent px-3 py-2 text-sm dark:border-gray-700 dark:text-white">
+                <option value="all" @selected(($status ?? 'all') === 'all')>All statuses</option>
+                <option value="active" @selected(($status ?? 'all') === 'active')>Active</option>
+                <option value="inactive" @selected(($status ?? 'all') === 'inactive')>Inactive</option>
+            </select>
+        </form>
 
+        <div id="users-results">
         {{-- Table --}}
         <div class="overflow-hidden rounded-xl border border-gray-200 bg-white dark:border-gray-800 dark:bg-gray-900">
             <table class="w-full text-left text-sm">
@@ -117,5 +118,59 @@
         <div class="mt-4">
             {{ $users->links() }}
         </div>
+        </div>
     </div>
 @endsection
+
+@push('scripts')
+    <script>
+        (() => {
+            const form = document.getElementById('user-filters');
+            const results = document.getElementById('users-results');
+            const searchInput = document.getElementById('user-search');
+            const statusInput = document.getElementById('user-status');
+            let debounceTimer;
+            let activeRequest;
+
+            const buildUrl = () => {
+                const params = new URLSearchParams();
+                if (searchInput.value.trim()) params.set('search', searchInput.value.trim());
+                if (statusInput.value !== 'all') params.set('status', statusInput.value);
+                const query = params.toString();
+                return `${form.action}${query ? `?${query}` : ''}`;
+            };
+
+            const fetchResults = async (url, pushState = true) => {
+                activeRequest?.abort();
+                activeRequest = new AbortController();
+
+                const response = await fetch(url, {
+                    headers: { 'Accept': 'application/json', 'X-Requested-With': 'XMLHttpRequest' },
+                    signal: activeRequest.signal,
+                });
+                if (!response.ok) throw new Error(`HTTP ${response.status}`);
+
+                const data = await response.json();
+                results.innerHTML = data.html;
+                if (pushState) window.history.replaceState({}, '', url);
+            };
+
+            const refresh = () => fetchResults(buildUrl()).catch(error => {
+                if (error.name !== 'AbortError') console.error('Unable to load users', error);
+            });
+
+            form.addEventListener('submit', event => { event.preventDefault(); refresh(); });
+            searchInput.addEventListener('input', () => {
+                clearTimeout(debounceTimer);
+                debounceTimer = setTimeout(refresh, 300);
+            });
+            statusInput.addEventListener('change', refresh);
+            results.addEventListener('click', event => {
+                const link = event.target.closest('a[href*="page="]');
+                if (!link) return;
+                event.preventDefault();
+                fetchResults(link.href);
+            });
+        })();
+    </script>
+@endpush

@@ -1,7 +1,6 @@
 @extends('layouts.admin.app')
 
 @section('content')
-    <x-admin.common.page-breadcrumb pageTitle="Book Details" />
 
     @php
         // Status badge styles keyed by status value.

@@ -1,7 +1,6 @@
 @extends('layouts.admin.app')
 
 @section('content')
-    <x-admin.common.page-breadcrumb pageTitle="Avatars" />
     
     @php
         $avatarSrc = asset('images/user/user-01.jpg');

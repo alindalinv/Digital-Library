@@ -5,8 +5,10 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\Category;
 use Illuminate\Http\Request;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Str;
 use Illuminate\Validation\Rule;
+use Illuminate\View\View;
 
 class CategoryController extends Controller
 {
@@ -18,19 +20,41 @@ class CategoryController extends Controller
         $this->middleware('permission:categories.delete')->only('destroy');
     }
 
-    public function index(Request $request)
+    public function index(Request $request): View|JsonResponse
     {
         $search = $request->string('search')->trim()->toString();
+        $status = $request->string('status', 'all')->toString();
+
+        if (! in_array($status, ['all', 'active', 'inactive'], true)) {
+            $status = 'all';
+        }
+
         $categories = Category::with(['parent:id,name'])->withCount(['books', 'children'])
             ->when($search, fn ($query) => $query->where('name', 'like', "%{$search}%"))
+            ->when($status !== 'all', fn ($query) => $query->where('status', $status === 'active'))
             ->orderBy('order')->orderBy('name')->paginate(15)->withQueryString();
 
-        return view('admin.categories.index', compact('categories', 'search'));
+        if ($request->ajax() || $request->wantsJson()) {
+            return response()->json([
+                'html' => view('admin.categories._results', compact('categories'))->render(),
+                'total' => $categories->total(),
+                'current_page' => $categories->currentPage(),
+                'last_page' => $categories->lastPage(),
+                'per_page' => $categories->perPage(),
+                'next_page_url' => $categories->nextPageUrl(),
+                'prev_page_url' => $categories->previousPageUrl(),
+            ]);
+        }
+
+        return view('admin.categories.index', compact('categories', 'search', 'status') + ['title' => 'Categories']);
     }
 
     public function create()
     {
-        return view('admin.categories.create', ['parents' => $this->parentOptions()]);
+        return view('admin.categories.create', [
+            'parents' => $this->parentOptions(),
+            'title' => 'Create Category',
+        ]);
     }
 
     public function store(Request $request)
@@ -50,6 +74,7 @@ class CategoryController extends Controller
         return view('admin.categories.edit', [
             'category' => $category,
             'parents' => $this->parentOptions($category),
+            'title' => 'Edit Category',
         ]);
     }
 

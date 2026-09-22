@@ -21,7 +21,6 @@
 
 @section('content')
     {{-- Page Breadcrumb --}}
-    <x-admin.common.page-breadcrumb :pageTitle="$currentPageTitle" />
 
     <div class="space-y-5 sm:space-y-6">
 

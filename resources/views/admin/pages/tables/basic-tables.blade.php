@@ -1,7 +1,6 @@
 @extends('layouts.admin.app')
 
 @section('content')
-    <x-admin.common.page-breadcrumb pageTitle="From Elements" />
     <div class="space-y-6">
         <x-common.component-card title="Basic Table 1">
             <x-tables.basic-tables.basic-tables-one />
