@@ -6,7 +6,7 @@
 @endphp
   <div class="relative flex flex-col items-center justify-center min-h-screen p-6 overflow-hidden z-1">
       {{-- common grid shape --}}
-      <x-common.common-grid-shape />
+      <x-admin.common.common-grid-shape />
       <!-- Centered Content -->
       <div class="mx-auto w-full max-w-[242px] text-center sm:max-w-[472px]">
           <h1 class="mb-8 font-bold text-gray-800 text-title-md xl:text-title-2xl">
