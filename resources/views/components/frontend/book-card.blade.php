@@ -1,6 +1,6 @@
 @props(['book', 'featured' => false])
 
-<div class="card h-100 border-0 shadow-sm position-relative">
+<div class="card h-100 border-0 shadow-sm position-relative catalog-book-card">
 
     {{-- Featured badge --}}
     @if($featured)
@@ -20,12 +20,10 @@
             <img src="{{ asset('storage/' . $book->cover_image) }}"
                  alt="{{ $book->title }}"
                  loading="lazy"
-                 class="card-img-top"
-                 style="height: 260px; object-fit: cover;"
+                 class="card-img-top catalog-cover"
                  onerror="this.onerror=null; this.parentElement.innerHTML='<div class=\'bg-secondary-subtle d-flex align-items-center justify-content-center\' style=\'height:260px;\'><span style=\'font-size:4rem;\' aria-hidden=\'true\'>📖</span></div>';">
         @else
-            <div class="bg-secondary-subtle d-flex align-items-center justify-content-center"
-                 style="height: 260px;">
+              <div class="catalog-cover bg-secondary-subtle d-flex align-items-center justify-content-center">
                 <span style="font-size: 4rem;" aria-hidden="true">📖</span>
             </div>
         @endif
@@ -42,8 +40,8 @@
 
         {{-- Title --}}
         <h5 class="card-title fw-semibold mb-1">
-            <a href="{{ route('books.show', $book->slug) }}"
-               class="text-dark text-decoration-none stretched-link">
+                <a href="{{ route('books.show', $book->slug) }}"
+                    class="text-dark text-decoration-none stretched-link">
                 {{ $book->title }}
             </a>
         </h5>

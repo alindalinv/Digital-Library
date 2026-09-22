@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Frontend;
 use App\Http\Controllers\Controller;
 use App\Models\Book;
 use App\Models\Category;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
 
@@ -13,7 +14,7 @@ class BookController extends Controller
     /**
      * Display a listing of published books.
      */
-    public function index(Request $request): View
+    public function index(Request $request): View|JsonResponse
     {
         $search = $request->string('search')->toString();
         $categoryId = $request->integer('category');
@@ -43,6 +44,18 @@ class BookController extends Controller
             ->whereHas('books', fn($q) => $q->published())
             ->orderBy('name')
             ->get(['id', 'name', 'slug']);
+
+        if ($request->ajax() || $request->wantsJson()) {
+            return response()->json([
+                'html' => view('frontend.books._results', compact('books'))->render(),
+                'total' => $books->total(),
+                'current_page' => $books->currentPage(),
+                'last_page' => $books->lastPage(),
+                'per_page' => $books->perPage(),
+                'next_page_url' => $books->nextPageUrl(),
+                'prev_page_url' => $books->previousPageUrl(),
+            ]);
+        }
 
         return view('frontend.books.index', [
             'title' => 'All Books',
