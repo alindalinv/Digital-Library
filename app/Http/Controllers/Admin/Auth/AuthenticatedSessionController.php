@@ -15,12 +15,6 @@ class AuthenticatedSessionController extends Controller
      */
     public function create(): View|RedirectResponse
     {
-        // Only redirect if already authenticated on the ADMIN guard.
-        // A logged-in frontend user will still see the admin login form.
-        if (Auth::guard('admin')->check()) {
-            return redirect()->route('admin.dashboard');
-        }
-
         return view('admin.pages.auth.signin');
     }
 
@@ -30,12 +24,12 @@ class AuthenticatedSessionController extends Controller
     public function store(Request $request): RedirectResponse
     {
         $credentials = $request->validate([
-            'email'    => ['required', 'email'],
+            'email' => ['required', 'email'],
             'password' => ['required', 'string'],
         ]);
 
         // Authenticate against the admin guard only
-        if (! Auth::guard('admin')->attempt($credentials, $request->boolean('remember'))) {
+        if (!Auth::guard('admin')->attempt($credentials, $request->boolean('remember'))) {
             return back()
                 ->withErrors(['email' => 'The email or password is incorrect.'])
                 ->onlyInput('email');
@@ -44,7 +38,7 @@ class AuthenticatedSessionController extends Controller
         // Check role on the admin-guard user
         $user = Auth::guard('admin')->user();
 
-        if (! $user->hasAnyRole(['Admin', 'Super Admin'])) {
+        if (!$user->hasAnyRole(['Admin', 'Super Admin'])) {
             Auth::guard('admin')->logout();
             $request->session()->regenerate(); // keep frontend session intact
 

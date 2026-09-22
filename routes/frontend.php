@@ -10,29 +10,54 @@ use App\Http\Controllers\Frontend\ReviewController;
 
 /*
 |--------------------------------------------------------------------------
-| Public Routes (Guest)
+| Public Routes
 |--------------------------------------------------------------------------
+|
+| These routes can be accessed without authentication.
+|
 */
 
-Route::get('/', [HomeController::class, 'index'])->name('home');
+Route::get('/', [HomeController::class, 'index'])
+    ->name('home');
 
-Route::get('/books', [BookController::class, 'index'])->name('books.index');
-Route::get('/books/{book:slug}', [BookController::class, 'show'])->name('books.show');
+Route::get('/books', [BookController::class, 'index'])
+    ->name('books.index');
+
+Route::get('/books/{book:slug}', [BookController::class, 'show'])
+    ->name('books.show');
+
 
 /*
 |--------------------------------------------------------------------------
 | Authenticated Member Routes
 |--------------------------------------------------------------------------
+|
+| These routes use the normal "web" guard through Laravel's "auth"
+| middleware.
+|
+| "verified" additionally requires the user's email to be verified.
+|
 */
 
 Route::middleware(['auth', 'verified'])
     ->group(function () {
 
-        /* ---------------- Dashboard ---------------- */
+        /*
+        |--------------------------------------------------------------------------
+        | Dashboard
+        |--------------------------------------------------------------------------
+        */
+
         Route::get('/dashboard', [DashboardController::class, 'index'])
             ->name('dashboard');
 
-        /* ---------------- Profile ---------------- */
+
+        /*
+        |--------------------------------------------------------------------------
+        | Profile
+        |--------------------------------------------------------------------------
+        */
+
         Route::get('/profile', [ProfileController::class, 'edit'])
             ->name('profile.edit');
 
@@ -48,13 +73,26 @@ Route::middleware(['auth', 'verified'])
         Route::delete('/profile', [ProfileController::class, 'destroy'])
             ->name('profile.destroy');
 
-        /* ---------------- Borrowings ---------------- */
+
+        /*
+        |--------------------------------------------------------------------------
+        | Borrowings
+        |--------------------------------------------------------------------------
+        */
+
         Route::get('/borrowings', [BorrowingController::class, 'index'])
             ->name('borrowings.index');
+
         Route::post('/borrowings/{book}', [BorrowingController::class, 'store'])
             ->name('borrowings.store');
 
-        /* ---------------- Reviews ---------------- */
+
+        /*
+        |--------------------------------------------------------------------------
+        | Reviews
+        |--------------------------------------------------------------------------
+        */
+
         Route::post('/books/{book}/reviews', [ReviewController::class, 'store'])
             ->name('reviews.store');
     });

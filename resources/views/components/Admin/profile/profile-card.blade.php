@@ -1,3 +1,4 @@
+@props(['user'])
 @php
     $displayName = $user->displayName();
     $role = $user->getRoleNames()->first() ?? 'Member';

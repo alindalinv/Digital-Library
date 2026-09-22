@@ -1,7 +1,12 @@
+@props(['user'])
+
 <div x-show="openProfileInfoModal" x-cloak
     class="fixed inset-0 z-99999 flex items-center justify-center bg-gray-900/50 p-4">
 
-    <div class="flex w-full max-w-lg flex-col overflow-hidden rounded-2xl bg-white shadow-xl" style="max-height: 90vh;">
+    <form method="POST" action="{{ route('admin.profile.update') }}"
+        class="flex w-full max-w-lg flex-col overflow-hidden rounded-2xl bg-white shadow-xl" style="max-height: 90vh;">
+        @csrf
+        @method('PATCH')
 
         {{-- ✅ Header — fixed, never scrolls --}}
         <div class="flex shrink-0 items-center justify-between border-b border-gray-200 p-5">
@@ -13,68 +18,8 @@
 
         {{-- ✅ Body — only this scrolls --}}
         <div class="flex-1 overflow-y-auto p-5">
-            <form method="POST" action="{{ route('admin.profile.update') }}" enctype="multipart/form-data">
-                @csrf
-                @method('PATCH')
-
-                <form method="POST" action="{{ route('admin.profile.update') }}" enctype="multipart/form-data">
-                    @csrf
-                    @method('PATCH')
-
                     <div class="max-h-[70vh] overflow-y-auto p-5">
                         <div class="grid grid-cols-1 gap-5">
-
-                            {{-- Photo --}}
-                            <div>
-                                <label class="mb-1.5 block text-sm font-medium text-gray-700 dark:text-gray-300">
-                                    Profile Photo
-                                </label>
-                                <div class="flex items-center gap-4">
-                                    <img src="{{ $user->avatarUrl() }}" alt="{{ $user->displayName() }}"
-                                        id="avatarPreview"
-                                        class="h-16 w-16 shrink-0 rounded-full border border-gray-200 object-cover dark:border-gray-700">
-                                    <input type="file" name="photo" accept="image/*"
-                                        onchange="document.getElementById('avatarPreview').src = window.URL.createObjectURL(event.target.files[0])"
-                                        class="block w-full text-sm text-gray-500 dark:text-gray-400
-                                          file:mr-3 file:rounded-full file:border-0
-                                          file:bg-blue-50 file:px-4 file:py-2
-                                          file:text-sm file:font-medium file:text-blue-600
-                                          hover:file:bg-blue-100
-                                          dark:file:bg-blue-500/15 dark:file:text-blue-400
-                                          dark:hover:file:bg-blue-500/25">
-                                </div>
-                                @error('photo')
-                                    <p class="mt-1.5 text-xs text-red-500 dark:text-red-400">{{ $message }}</p>
-                                @enderror
-                            </div>
-
-                            {{-- First Name --}}
-                            <div>
-                                <label for="first_name"
-                                    class="mb-1.5 block text-sm font-medium text-gray-700 dark:text-gray-300">
-                                    First Name
-                                </label>
-                                <input type="text" id="first_name" name="first_name"
-                                    value="{{ old('first_name', $user->first_name) }}"
-                                    class="w-full rounded-lg border border-gray-300 bg-transparent px-3 py-2 text-sm text-gray-800 transition placeholder:text-gray-400 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 focus:outline-none dark:border-gray-700 dark:text-white/90 dark:placeholder:text-gray-500 dark:focus:border-blue-500">
-                                @error('first_name')
-                                    <p class="mt-1.5 text-xs text-red-500 dark:text-red-400">{{ $message }}</p>
-                                @enderror
-                            </div>
-
-                            {{-- Last Name --}}
-                            <div>
-                                <label for="last_name"
-                                    class="mb-1.5 block text-sm font-medium text-gray-700 dark:text-gray-300">
-                                    Last Name
-                                </label>
-                                <input type="text" id="last_name" name="last_name"
-                                    value="{{ old('last_name', $user->last_name) }}"
-                                    class="w-full rounded-lg border border-gray-300 bg-transparent px-3 py-2 text-sm text-gray-800 transition placeholder:text-gray-400 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 focus:outline-none dark:border-gray-700 dark:text-white/90 dark:placeholder:text-gray-500 dark:focus:border-blue-500">
-                                @error('last_name')
-                                    <p class="mt-1.5 text-xs text-red-500 dark:text-red-400">{{ $message }}</p>
-                                @enderror
-                            </div>
 
                             {{-- Email --}}
                             <div>
@@ -137,34 +82,6 @@
                                 @enderror
                             </div>
 
-                            {{-- Job Title --}}
-                            <div>
-                                <label for="job_title"
-                                    class="mb-1.5 block text-sm font-medium text-gray-700 dark:text-gray-300">
-                                    Job Title
-                                </label>
-                                <input type="text" id="job_title" name="job_title"
-                                    value="{{ old('job_title', $user->job_title) }}"
-                                    class="w-full rounded-lg border border-gray-300 bg-transparent px-3 py-2 text-sm text-gray-800 transition placeholder:text-gray-400 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 focus:outline-none dark:border-gray-700 dark:text-white/90 dark:placeholder:text-gray-500 dark:focus:border-blue-500">
-                                @error('job_title')
-                                    <p class="mt-1.5 text-xs text-red-500 dark:text-red-400">{{ $message }}</p>
-                                @enderror
-                            </div>
-
-                            {{-- Organization --}}
-                            <div>
-                                <label for="organization"
-                                    class="mb-1.5 block text-sm font-medium text-gray-700 dark:text-gray-300">
-                                    Organization
-                                </label>
-                                <input type="text" id="organization" name="organization"
-                                    value="{{ old('organization', $user->organization) }}"
-                                    class="w-full rounded-lg border border-gray-300 bg-transparent px-3 py-2 text-sm text-gray-800 transition placeholder:text-gray-400 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 focus:outline-none dark:border-gray-700 dark:text-white/90 dark:placeholder:text-gray-500 dark:focus:border-blue-500">
-                                @error('organization')
-                                    <p class="mt-1.5 text-xs text-red-500 dark:text-red-400">{{ $message }}</p>
-                                @enderror
-                            </div>
-
                             {{-- Address --}}
                             <div>
                                 <label for="address"
@@ -193,8 +110,6 @@
 
                         </div>
                     </div>
-                </form>
-            </form>
         </div>
         <div class="flex shrink-0 items-center justify-end gap-3 border-t border-gray-200 p-5">
             <button type="button" @click="openProfileInfoModal = false" class="rounded-full border px-4 py-2 text-sm">
@@ -211,5 +126,5 @@
             </button>
         </div>
 
-    </div>
+    </form>
 </div>

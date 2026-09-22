@@ -37,7 +37,7 @@
         </div>
 
         {{-- ============ Form ============ --}}
-        <form method="POST" action="{{ route('admin.profile.update') }}" enctype="multipart/form-data"
+        <form method="POST" action="{{ route('admin.profile.header.update') }}" enctype="multipart/form-data"
             class="flex flex-1 flex-col overflow-hidden">
             @csrf
             @method('PATCH')

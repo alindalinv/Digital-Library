@@ -9,31 +9,74 @@ use Symfony\Component\HttpFoundation\Response;
 
 class AdminMiddleware
 {
-    public function handle(Request $request, Closure $next): Response
-    {
+    public function handle(
+        Request $request,
+        Closure $next
+    ): Response {
+
         $auth = Auth::guard('admin');
 
-        // 1. Not logged in on the admin guard → admin login
+
+        /*
+        |--------------------------------------------------------------------------
+        | 1. Admin authentication
+        |--------------------------------------------------------------------------
+        */
+
         if (! $auth->check()) {
             return redirect()->route('admin.login');
         }
 
+
+        /*
+        |--------------------------------------------------------------------------
+        | 2. Get admin user
+        |--------------------------------------------------------------------------
+        */
+
         $user = $auth->user();
 
-        // 2. Account disabled → logout admin guard only
-        if ((int) $user->status !== 1) {
+        if (! $user) {
             $auth->logout();
-            $request->session()->regenerate();   // keep frontend session
+
+            return redirect()->route('admin.login');
+        }
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | 3. Check account status
+        |--------------------------------------------------------------------------
+        */
+
+        if ((int) $user->status !== 1) {
+
+            $auth->logout();
 
             return redirect()
                 ->route('admin.login')
-                ->withErrors(['email' => 'Your account has been disabled.']);
+                ->withErrors([
+                    'email' => 'Your account has been disabled.',
+                ]);
         }
 
-        // 3. Not an admin → 403
+
+        /*
+        |--------------------------------------------------------------------------
+        | 4. Check admin permission
+        |--------------------------------------------------------------------------
+        */
+
         if (! $user->can('admin.access')) {
             abort(403, 'You do not have admin access.');
         }
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | 5. Continue
+        |--------------------------------------------------------------------------
+        */
 
         return $next($request);
     }

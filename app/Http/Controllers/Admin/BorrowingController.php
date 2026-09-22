@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Models\Borrowing;
 use Illuminate\Http\Request;
 
 class BorrowingController extends Controller
@@ -12,6 +13,7 @@ class BorrowingController extends Controller
         $borrowings = Borrowing::with(['user', 'book'])
             ->latest()
             ->paginate(15);
+
         return view('admin.borrowings.index', compact('borrowings'));
     }
 
@@ -20,9 +22,9 @@ class BorrowingController extends Controller
         $this->authorize('borrowings.approve');
 
         $borrowing->update([
-            'status' => 'approved',
+            'status'      => 'approved',
             'borrowed_at' => now(),
-            'due_at' => now()->addDays(14),
+            'due_at'      => now()->addDays(14),
         ]);
 
         $borrowing->book->decrement('stock');

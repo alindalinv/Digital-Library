@@ -19,98 +19,227 @@ use Illuminate\Support\Facades\Route;
 
 /*
 |--------------------------------------------------------------------------
-| Admin Authentication (Guest — admin guard only)
+| Admin Authentication
 |--------------------------------------------------------------------------
+|
+| These routes are ONLY for guests using the admin guard.
+| They must NOT use the "admin" middleware.
+|
 */
 
 Route::middleware('guest:admin')->group(function () {
+
+    // GET /admin/login
     Route::get('/login', [AuthenticatedSessionController::class, 'create'])
         ->name('admin.login');
+
+    // POST /admin/login
     Route::post('/login', [AuthenticatedSessionController::class, 'store'])
         ->name('admin.login.store');
 });
+
+
+/*
+|--------------------------------------------------------------------------
+| Admin Logout
+|--------------------------------------------------------------------------
+|
+| Logout requires an authenticated admin.
+|
+*/
 
 Route::post('/logout', [AuthenticatedSessionController::class, 'destroy'])
     ->middleware('admin')
     ->name('admin.logout');
 
+
 /*
 |--------------------------------------------------------------------------
-| Admin Panel (admin guard only — no web 'auth')
+| Protected Admin Panel
 |--------------------------------------------------------------------------
+|
+| Everything inside this group requires:
+|
+| 1. Admin guard authentication
+| 2. Admin authorization
+|
 */
 
 Route::middleware('admin')
     ->name('admin.')
     ->group(function () {
 
-        /* ---------------- Dashboard ---------------- */
+        /*
+        |--------------------------------------------------------------------------
+        | Dashboard
+        |--------------------------------------------------------------------------
+        */
+
         Route::get('/dashboard', [DashboardController::class, 'index'])
             ->name('dashboard');
 
-        /* ---------------- Profile ---------------- */
+
+        /*
+        |--------------------------------------------------------------------------
+        | Profile
+        |--------------------------------------------------------------------------
+        */
+
         Route::get('/profile', [ProfileController::class, 'edit'])
             ->name('profile.edit');
+
         Route::patch('/profile', [ProfileController::class, 'update'])
             ->name('profile.update');
+
         Route::patch('/profile/header', [ProfileController::class, 'updateHeader'])
             ->name('profile.header.update');
+
         Route::put('/profile/password', [ProfileController::class, 'updatePassword'])
             ->name('profile.password.update');
+
         Route::delete('/profile', [ProfileController::class, 'destroy'])
             ->name('profile.destroy');
 
-        /* ---------------- Categories ---------------- */
+
+        /*
+        |--------------------------------------------------------------------------
+        | Categories
+        |--------------------------------------------------------------------------
+        */
+
         Route::resource('categories', CategoryController::class);
 
-        /* ---------------- Books ---------------- */
+
+        /*
+        |--------------------------------------------------------------------------
+        | Books
+        |--------------------------------------------------------------------------
+        */
+
         Route::post('books/upload-image', [BookController::class, 'uploadImage'])
             ->name('books.upload-image');
-        Route::get('books/trashed', [BookController::class, 'trashed'])->name('books.trashed');
-        Route::post('books/{id}/restore', [BookController::class, 'restore'])->name('books.restore');
-        Route::delete('books/{id}/force-delete', [BookController::class, 'forceDelete'])->name('books.force-delete');
+
+        Route::get('books/trashed', [BookController::class, 'trashed'])
+            ->name('books.trashed');
+
+        Route::post('books/{id}/restore', [BookController::class, 'restore'])
+            ->name('books.restore');
+
+        Route::delete('books/{id}/force-delete', [BookController::class, 'forceDelete'])
+            ->name('books.force-delete');
+
         Route::resource('books', BookController::class);
 
-        /* ---------------- Authors ---------------- */
+
+        /*
+        |--------------------------------------------------------------------------
+        | Authors
+        |--------------------------------------------------------------------------
+        */
+
         Route::resource('authors', AuthorController::class);
 
-        /* ---------------- Publishers ---------------- */
+
+        /*
+        |--------------------------------------------------------------------------
+        | Publishers
+        |--------------------------------------------------------------------------
+        */
+
         Route::resource('publishers', PublisherController::class);
 
-        /* ---------------- E-book Files ---------------- */
+
+        /*
+        |--------------------------------------------------------------------------
+        | E-book Files
+        |--------------------------------------------------------------------------
+        */
+
         Route::resource('ebook-files', EbookFileController::class);
 
-        /* ---------------- Borrowings ---------------- */
+
+        /*
+        |--------------------------------------------------------------------------
+        | Borrowings
+        |--------------------------------------------------------------------------
+        */
+
         Route::post('borrowings/{borrowing}/approve', [BorrowingController::class, 'approve'])
             ->name('borrowings.approve');
+
         Route::resource('borrowings', BorrowingController::class);
 
-        /* ---------------- Reviews ---------------- */
-        Route::resource('reviews', ReviewController::class)
-            ->only(['index', 'show', 'update', 'destroy']);
 
-        /* ---------------- Roles ---------------- */
+        /*
+        |--------------------------------------------------------------------------
+        | Reviews
+        |--------------------------------------------------------------------------
+        */
+
+        Route::resource('reviews', ReviewController::class)
+            ->only([
+                'index',
+                'show',
+                'update',
+                'destroy',
+            ]);
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | Roles
+        |--------------------------------------------------------------------------
+        */
+
         Route::get('roles/{role}/permissions', [RoleController::class, 'editPermissions'])
             ->name('roles.permissions.edit');
+
         Route::put('roles/{role}/permissions', [RoleController::class, 'updatePermissions'])
             ->name('roles.permissions.update');
+
         Route::resource('roles', RoleController::class);
 
-        /* ---------------- Permissions ---------------- */
+
+        /*
+        |--------------------------------------------------------------------------
+        | Permissions
+        |--------------------------------------------------------------------------
+        */
+
         Route::resource('permissions', PermissionController::class);
 
-        /* ---------------- Users ---------------- */
+
+        /*
+        |--------------------------------------------------------------------------
+        | Users
+        |--------------------------------------------------------------------------
+        */
+
         Route::get('users/{user}/roles', [UserController::class, 'editRoles'])
             ->name('users.roles.edit');
+
         Route::put('users/{user}/roles', [UserController::class, 'updateRoles'])
             ->name('users.roles.update');
+
         Route::resource('users', UserController::class);
 
-        /* ---------------- Reports ---------------- */
+
+        /*
+        |--------------------------------------------------------------------------
+        | Reports
+        |--------------------------------------------------------------------------
+        */
+
         Route::get('reports', [ReportController::class, 'index'])
             ->name('reports.index');
 
-        /* ---------------- Audit Logs ---------------- */
+
+        /*
+        |--------------------------------------------------------------------------
+        | Audit Logs
+        |--------------------------------------------------------------------------
+        */
+
         Route::get('audit-logs', [AuditLogController::class, 'index'])
             ->name('audit-logs.index');
     });

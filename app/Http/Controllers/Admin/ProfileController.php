@@ -3,7 +3,7 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
-use App\Http\Requests\ProfileUpdateRequest;
+use App\Http\Requests\AdminProfileUpdateRequest;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -21,7 +21,7 @@ class ProfileController extends Controller
     {
         return view('admin.pages.profile.index', [
             'title' => 'Edit Profile',
-            'user'  => $request->user(),
+            'user'  => $request->user('admin'),
         ]);
     }
 
@@ -32,9 +32,22 @@ class ProfileController extends Controller
      *   - Profile header (photo, name, job, org, social links)
      *   - Personal info (email, phone, gender, DOB, bio, address)
      */
-    public function update(ProfileUpdateRequest $request): RedirectResponse
+    public function update(AdminProfileUpdateRequest $request): RedirectResponse
     {
-        $user      = $request->user();
+        return $this->saveProfile($request);
+    }
+
+    /**
+     * Update the profile header: photo, name, work details, and social links.
+     */
+    public function updateHeader(AdminProfileUpdateRequest $request): RedirectResponse
+    {
+        return $this->saveProfile($request);
+    }
+
+    private function saveProfile(AdminProfileUpdateRequest $request): RedirectResponse
+    {
+        $user = $request->user('admin');
         $validated = $request->validated();
 
         // Handle photo upload
@@ -75,11 +88,11 @@ class ProfileController extends Controller
     public function updatePassword(Request $request): RedirectResponse
     {
         $validated = $request->validateWithBag('updatePassword', [
-            'current_password' => ['required', 'current_password'],
+            'current_password' => ['required', 'current_password:admin'],
             'password'         => ['required', 'string', 'min:8', 'confirmed'],
         ]);
 
-        $request->user()->forceFill([
+        $request->user('admin')->forceFill([
             'password' => Hash::make($validated['password']),
         ])->save();
 
@@ -94,17 +107,17 @@ class ProfileController extends Controller
     public function destroy(Request $request): RedirectResponse
     {
         $request->validateWithBag('userDeletion', [
-            'password' => ['required', 'current_password'],
+            'password' => ['required', 'current_password:admin'],
         ]);
 
-        $user = $request->user();
+        $user = $request->user('admin');
 
         // Delete profile photo
         if ($user->photo && Storage::disk('public')->exists($user->photo)) {
             Storage::disk('public')->delete($user->photo);
         }
 
-        Auth::logout();
+        Auth::guard('admin')->logout();
 
         $user->delete();
 
