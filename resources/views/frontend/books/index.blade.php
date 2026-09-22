@@ -1,9 +1,14 @@
 <x-app-layout>
+    @php
+        $showLatestTitle = request()->has('sort') && $sort === 'latest';
+        $booksPageTitle = $featured ? 'Featured Books' : ($showLatestTitle ? 'Latest Books' : 'All Books');
+    @endphp
+
     <x-slot name="header">
         <div class="d-flex flex-column flex-md-row align-items-md-center justify-content-between gap-2">
             <div>
                 <p class="small text-uppercase fw-semibold text-primary mb-1">Digital Library</p>
-                <h2 class="h4 mb-0 fw-semibold text-dark">{{ __('All Books') }}</h2>
+                <h2 id="books-page-title" class="h4 mb-0 fw-semibold text-dark">{{ __($booksPageTitle) }}</h2>
             </div>
             <span class="text-secondary small">{{ $books->total() }} titles to explore</span>
         </div>
@@ -90,6 +95,7 @@
             const form = document.getElementById('book-filters');
             const results = document.getElementById('books-results');
             const summary = document.getElementById('books-summary');
+            const pageTitle = document.getElementById('books-page-title');
             if (!form || !results) return;
 
             const search = form.querySelector('[name="search"]');
@@ -97,6 +103,7 @@
             const sort = form.querySelector('[name="sort"]');
             const featured = form.querySelector('[name="featured"]');
             if (!search || !category || !sort || !featured) return;
+            let latestView = @json($showLatestTitle);
             let timer;
             let activeRequest;
 
@@ -106,10 +113,14 @@
                 params.delete('page');
                 if (search.value.trim()) params.set('search', search.value.trim()); else params.delete('search');
                 if (category.value) params.set('category', category.value); else params.delete('category');
-                if (sort.value && sort.value !== 'latest') params.set('sort', sort.value); else params.delete('sort');
+                if (sort.value !== 'latest' || latestView) params.set('sort', sort.value); else params.delete('sort');
                 if (featured.checked) params.set('featured', '1'); else params.delete('featured');
                 if (page > 1) params.set('page', page);
                 return url;
+            };
+
+            const updatePageTitle = () => {
+                pageTitle.textContent = featured.checked ? 'Featured Books' : (latestView ? 'Latest Books' : 'All Books');
             };
 
             const load = async (url, updateUrl = true) => {
@@ -136,8 +147,8 @@
             form.addEventListener('submit', event => { event.preventDefault(); refresh(); });
             search.addEventListener('input', () => { clearTimeout(timer); timer = setTimeout(refresh, 300); });
             category.addEventListener('change', refresh);
-            sort.addEventListener('change', refresh);
-            featured.addEventListener('change', refresh);
+            sort.addEventListener('change', () => { latestView = sort.value === 'latest'; updatePageTitle(); refresh(); });
+            featured.addEventListener('change', () => { updatePageTitle(); refresh(); });
             results.addEventListener('click', event => {
                 const link = event.target.closest('a[href*="page="]');
                 if (!link) return;

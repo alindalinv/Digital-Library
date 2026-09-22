@@ -1,4 +1,23 @@
-<nav class="navbar navbar-expand-sm navbar-light bg-white border-bottom">
+@php
+    $isBookIndex = request()->routeIs('books.index');
+    $isFeaturedBooks = $isBookIndex && request()->boolean('featured');
+    $isNewArrivals = $isBookIndex && request()->has('sort') && request()->get('sort') === 'latest' && ! $isFeaturedBooks;
+    $isBooksPage = request()->routeIs('books.show') || ($isBookIndex && ! $isFeaturedBooks && ! $isNewArrivals);
+@endphp
+
+<style>
+    .frontend-nav .nav-link { border-radius: .65rem; color: #5b6573; font-weight: 500; padding: .5rem .75rem; transition: color .15s ease, background-color .15s ease; }
+    .frontend-nav .nav-link:hover, .frontend-nav .nav-link:focus-visible { background: #f1f5f9; color: #0d6efd; }
+    .frontend-nav .nav-link.active { background: #e8f1ff; color: #0b5ed7; font-weight: 600; }
+    .frontend-nav .user-trigger { color: #344054; }
+    @media (max-width: 575.98px) {
+        .frontend-nav .navbar-nav { padding-top: .75rem; }
+        .frontend-nav .nav-link { margin-bottom: .25rem; }
+        .frontend-nav .auth-actions { border-top: 1px solid #e9ecef; margin-top: .75rem; padding-top: .75rem; }
+    }
+</style>
+
+<nav class="frontend-nav navbar navbar-expand-sm navbar-light bg-white border-bottom">
     <div class="container">
 
         {{-- Logo --}}
@@ -33,21 +52,21 @@
                 </li>
 
                 <li class="nav-item">
-                    <a class="nav-link {{ request()->routeIs('books.*') ? 'active' : '' }}"
+                    <a class="nav-link {{ $isBooksPage ? 'active' : '' }}"
                        href="{{ route('books.index') }}">
                         {{ __('Books') }}
                     </a>
                 </li>
 
                 <li class="nav-item">
-                    <a class="nav-link {{ request()->routeIs('books.index') && request()->boolean('featured') ? 'active' : '' }}"
+                    <a class="nav-link {{ $isFeaturedBooks ? 'active' : '' }}"
                        href="{{ route('books.index', ['featured' => 1]) }}">
                         {{ __('Featured') }}
                     </a>
                 </li>
 
                 <li class="nav-item">
-                    <a class="nav-link {{ request()->routeIs('books.index') && ! request()->boolean('featured') && request()->get('sort', 'latest') === 'latest' ? 'active' : '' }}"
+                    <a class="nav-link {{ $isNewArrivals ? 'active' : '' }}"
                        href="{{ route('books.index', ['sort' => 'latest']) }}">
                         {{ __('New Arrivals') }}
                     </a>
@@ -77,7 +96,7 @@
                         $currentUser = Auth::user();
                     @endphp
                     <div class="dropdown">
-                        <button class="btn btn-link nav-link dropdown-toggle text-decoration-none d-inline-flex align-items-center"
+                        <button class="btn btn-link nav-link user-trigger dropdown-toggle text-decoration-none d-inline-flex align-items-center"
                                 type="button"
                                 id="userDropdown"
                                 data-bs-toggle="dropdown"
@@ -125,7 +144,7 @@
                         </ul>
                     </div>
                 @else
-                    <div class="d-flex gap-3">
+                    <div class="auth-actions d-flex gap-3">
                         <a href="{{ route('login') }}" class="nav-link">
                             {{ __('Log in') }}
                         </a>
