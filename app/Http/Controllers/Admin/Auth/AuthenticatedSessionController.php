@@ -15,10 +15,12 @@ class AuthenticatedSessionController extends Controller
      */
     public function create(): View|RedirectResponse
     {
-        // If already authenticated, go directly to admin dashboard
-        if (auth()->check()) {
+        // Only redirect if already authenticated on the ADMIN guard.
+        // A logged-in frontend user will still see the admin login form.
+        if (Auth::guard('admin')->check()) {
             return redirect()->route('admin.dashboard');
         }
+
         return view('admin.pages.auth.signin');
     }
 
@@ -27,33 +29,24 @@ class AuthenticatedSessionController extends Controller
      */
     public function store(Request $request): RedirectResponse
     {
-        // Validate login form
         $credentials = $request->validate([
-            'email' => ['required', 'email'],
+            'email'    => ['required', 'email'],
             'password' => ['required', 'string'],
         ]);
 
-        // Attempt to authenticate the user
-        if (
-            !Auth::attempt(
-                $credentials,
-                $request->boolean('remember')
-            )
-        ) {
+        // Authenticate against the admin guard only
+        if (! Auth::guard('admin')->attempt($credentials, $request->boolean('remember'))) {
             return back()
-                ->withErrors([
-                    'email' => 'The email or password is incorrect.',
-                ])
+                ->withErrors(['email' => 'The email or password is incorrect.'])
                 ->onlyInput('email');
         }
 
-        // Regenerate session after successful authentication
-        $request->session()->regenerate();
+        // Check role on the admin-guard user
+        $user = Auth::guard('admin')->user();
 
-        // Check admin permissions
-        if (!$request->user()->hasAnyRole(['Admin', 'Super Admin'])) {
-
-            Auth::logout();
+        if (! $user->hasAnyRole(['Admin', 'Super Admin'])) {
+            Auth::guard('admin')->logout();
+            $request->session()->regenerate(); // keep frontend session intact
 
             return back()
                 ->withErrors([
@@ -62,21 +55,22 @@ class AuthenticatedSessionController extends Controller
                 ->onlyInput('email');
         }
 
-        // Login successful
+        $request->session()->regenerate();
+
         return redirect()->intended(route('admin.dashboard'));
     }
+
+    /**
+     * Log out of the admin guard only.
+     */
     public function destroy(Request $request): RedirectResponse
     {
-        // Logout the current user
-        Auth::logout();
+        Auth::guard('admin')->logout();
 
-        // Remove the current session
-        $request->session()->invalidate();
-
-        // Generate a new CSRF token
+        // Do NOT invalidate the whole session — that would log the
+        // frontend user out too. Just rotate the CSRF token.
         $request->session()->regenerateToken();
 
-        // Go back to admin login
         return redirect()->route('admin.login');
     }
 }

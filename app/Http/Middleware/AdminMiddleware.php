@@ -11,16 +11,17 @@ class AdminMiddleware
 {
     public function handle(Request $request, Closure $next): Response
     {
+        $auth = Auth::guard('admin');
         // 1. Not logged in → redirect to admin login
-        if (! Auth::check()) {
+        if (!$auth->check()) {
             return redirect()->route('admin.login');
         }
 
-        $user = Auth::user();
+        $user = $auth->user();
 
         // 2. Account disabled → logout + redirect with error
         if ((int) $user->status !== 1) {
-            Auth::logout();
+            $auth->logout();
             $request->session()->invalidate();
             $request->session()->regenerateToken();
 
@@ -30,7 +31,7 @@ class AdminMiddleware
         }
 
         // 3. Not an admin → 403
-        if (! $user->can('admin.access')) {
+        if (!$user->can('admin.access')) {
             abort(403, 'You do not have admin access.');
         }
 

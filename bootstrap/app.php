@@ -43,6 +43,9 @@ return Application::configure(basePath: dirname(__DIR__))
             'permission' => \Spatie\Permission\Middleware\PermissionMiddleware::class,
             'role_or_permission' => \Spatie\Permission\Middleware\RoleOrPermissionMiddleware::class,
         ]);
+        // Default (web guard) — frontend
+        $middleware->redirectGuestsTo(fn() => route('login'));
+        $middleware->redirectUsersTo('/');
         // Trust Railway / reverse-proxy headers so HTTPS is detected
         $middleware->trustProxies(at: '*');
 
