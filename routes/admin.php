@@ -167,6 +167,9 @@ Route::middleware('admin')
         Route::post('borrowings/{borrowing}/approve', [BorrowingController::class, 'approve'])
             ->name('borrowings.approve');
 
+        Route::get('borrowings/pending', [BorrowingController::class, 'pending'])
+            ->name('borrowings.pending');
+
         Route::resource('borrowings', BorrowingController::class);
 
 

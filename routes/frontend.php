@@ -86,6 +86,9 @@ Route::middleware(['auth', 'verified'])
         Route::post('/borrowings/{book}', [BorrowingController::class, 'borrowBook'])
             ->name('borrowings.store');
 
+        Route::delete('/borrowings/{borrowing}', [BorrowingController::class, 'cancel'])
+            ->name('borrowings.cancel');
+
 
         /*
         |--------------------------------------------------------------------------

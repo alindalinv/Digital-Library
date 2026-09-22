@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Frontend;
 
 use App\Http\Controllers\Controller;
 use App\Models\Book;
+use App\Models\Borrowing;
 use App\Models\Category;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -87,6 +88,14 @@ class BookController extends Controller
             'files',
         ]);
 
+        $currentBorrowing = auth()->check()
+            ? Borrowing::where('user_id', auth()->id())
+                ->where('book_id', $book->getKey())
+                ->whereIn('status', ['pending', 'approved', 'overdue'])
+                ->latest()
+                ->first()
+            : null;
+
 
         // 3. Increment view count (skip known bots)
         // $userAgent = strtolower($request->userAgent() ?? '');
@@ -153,6 +162,7 @@ class BookController extends Controller
                 : null,
             'ogImage' => $book->cover_url,
             'book' => $book,
+            'currentBorrowing' => $currentBorrowing,
             'relatedBooks' => $relatedBooks,
         ]);
     }

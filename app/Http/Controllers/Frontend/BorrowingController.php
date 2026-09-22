@@ -67,6 +67,19 @@ class BorrowingController extends Controller
         return back()->with('success', 'Borrowing request submitted.');
     }
 
+    public function cancel(Borrowing $borrowing): RedirectResponse
+    {
+        abort_unless($borrowing->user_id === Auth::id(), 403);
+
+        if ($borrowing->status !== 'pending') {
+            return back()->withErrors(['borrowing' => 'Only pending borrowing requests can be removed.']);
+        }
+
+        $borrowing->delete();
+
+        return back()->with('success', 'Borrowing request removed.');
+    }
+
     public function show(Borrowing $borrowing)
     {
         abort_unless($borrowing->user_id === Auth::id(), 403);
