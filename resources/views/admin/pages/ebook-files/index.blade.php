@@ -12,11 +12,6 @@
                 <a href="{{ route('admin.ebook-files.create') }}" class="rounded-lg bg-brand-500 px-4 py-2 text-sm font-medium text-white hover:bg-brand-600">Upload file</a>
             @endcan
         </div>
-
-        @if (session('success'))
-            <div class="mb-5 rounded-lg bg-green-50 px-4 py-3 text-sm text-green-700 dark:bg-green-500/10 dark:text-green-400">{{ session('success') }}</div>
-        @endif
-
         <form id="ebookFileSearchForm" class="mb-5" method="GET" action="{{ route('admin.ebook-files.index') }}">
             <input id="ebookFileSearch" name="search" value="{{ $search }}" placeholder="Search by book title or ISBN" autocomplete="off"
                 class="w-full max-w-md rounded-lg border border-gray-300 bg-transparent px-3 py-2 text-sm dark:border-gray-700 dark:text-white">

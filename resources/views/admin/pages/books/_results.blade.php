@@ -62,8 +62,11 @@
     </div>
 @else
     {{-- Results count --}}
-    <div class="mb-4 flex items-center justify-between">
+    <div class="mb-4 flex flex-wrap items-center justify-between gap-2">
         <p class="text-sm text-gray-500 dark:text-gray-400">
+            <span class="mr-1 inline-block h-1.5 w-1.5 rounded-full bg-blue-500 align-middle"></span>
+            Results
+            <span class="mx-1 text-gray-300 dark:text-gray-700">/</span>
             Showing
             <span class="font-medium text-gray-800 dark:text-gray-200">{{ $books->firstItem() }}</span>
             to
@@ -75,10 +78,10 @@
     </div>
 
     {{-- Books Table --}}
-    <div class="overflow-x-auto rounded-xl border border-gray-200 dark:border-gray-800">
+    <div class="overflow-x-auto rounded-xl border border-gray-200 shadow-sm dark:border-gray-800">
         <table class="w-full text-left text-sm">
             <thead class="border-b border-gray-200 bg-gray-50 dark:border-gray-800 dark:bg-gray-900/50">
-                <tr>
+                <tr class="text-xs uppercase tracking-wide">
                     <th scope="col" class="px-4 py-3 font-medium text-gray-600 dark:text-gray-400">Book</th>
                     <th scope="col" class="hidden px-4 py-3 font-medium text-gray-600 md:table-cell dark:text-gray-400">Category</th>
                     <th scope="col" class="hidden px-4 py-3 font-medium text-gray-600 lg:table-cell dark:text-gray-400">Authors</th>
@@ -95,7 +98,7 @@
                         $bookStatus = $statusStyles[$book->status] ?? $statusStyles['draft'];
                     @endphp
 
-                    <tr class="transition hover:bg-gray-50 dark:hover:bg-gray-800/50">
+                    <tr class="transition hover:bg-blue-50/40 dark:hover:bg-blue-500/[0.04]">
 
                         {{-- Book: cover + title --}}
                         <td class="px-4 py-3">

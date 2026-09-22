@@ -38,7 +38,9 @@ class EbookFileController extends Controller
             ]);
         }
 
-        return view('admin.pages.ebook-files.index', compact('ebookFiles', 'search'));
+        return view('admin.pages.ebook-files.index', compact('ebookFiles', 'search') + [
+            'title' => 'E-book Files',
+        ]);
     }
 
     public function create(Request $request): View
@@ -46,6 +48,7 @@ class EbookFileController extends Controller
         return view('admin.pages.ebook-files.create', [
             'books' => Book::orderBy('title')->get(['id', 'title', 'isbn']),
             'selectedBookId' => $request->integer('book_id') ?: null,
+            'title' => 'Upload E-book File',
         ]);
     }
 
@@ -78,7 +81,9 @@ class EbookFileController extends Controller
     public function show(EbookFile $ebookFile): View
     {
         $ebookFile->load('book:id,title,isbn');
-        return view('admin.pages.ebook-files.show', compact('ebookFile'));
+        return view('admin.pages.ebook-files.show', compact('ebookFile') + [
+            'title' => 'E-book File',
+        ]);
     }
 
     public function edit(EbookFile $ebookFile): View
@@ -86,6 +91,7 @@ class EbookFileController extends Controller
         return view('admin.pages.ebook-files.edit', [
             'ebookFile' => $ebookFile,
             'books' => Book::orderBy('title')->get(['id', 'title', 'isbn']),
+            'title' => 'Edit E-book File',
         ]);
     }
 
