@@ -253,9 +253,19 @@
                 <div class="mt-5">
                     <h2 class="h5 fw-semibold mb-3">You might also like</h2>
 
-                    <div class="row g-3 g-md-4">
+                    <style>
+                        .related-books-grid > [class*="col-"] { display: flex; }
+                        .related-books-grid .catalog-book-card { width: 100%; }
+                        .related-books-grid .catalog-cover { height: 220px; object-fit: cover; }
+                        .related-books-grid .catalog-book-card .card-body { min-height: 220px; }
+                        @media (max-width: 575.98px) {
+                            .related-books-grid .catalog-cover { height: 190px; }
+                            .related-books-grid .catalog-book-card .card-body { min-height: 200px; }
+                        }
+                    </style>
+                    <div class="row g-3 g-md-4 related-books-grid">
                         @foreach ($relatedBooks as $related)
-                            <div class="col-6 col-md-4 col-lg-3">
+                            <div class="col-6 col-md-4 col-lg-3 d-flex">
                                 <x-frontend.book-card :book="$related" />
                             </div>
                         @endforeach
