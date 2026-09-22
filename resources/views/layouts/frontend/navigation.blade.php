@@ -32,12 +32,26 @@
                     </a>
                 </li>
 
-                {{-- <li class="nav-item">
+                <li class="nav-item">
                     <a class="nav-link {{ request()->routeIs('books.*') ? 'active' : '' }}"
                        href="{{ route('books.index') }}">
                         {{ __('Books') }}
                     </a>
-                </li> --}}
+                </li>
+
+                <li class="nav-item">
+                    <a class="nav-link {{ request()->routeIs('books.index') && request()->boolean('featured') ? 'active' : '' }}"
+                       href="{{ route('books.index', ['featured' => 1]) }}">
+                        {{ __('Featured') }}
+                    </a>
+                </li>
+
+                <li class="nav-item">
+                    <a class="nav-link {{ request()->routeIs('books.index') && ! request()->boolean('featured') && request()->get('sort', 'latest') === 'latest' ? 'active' : '' }}"
+                       href="{{ route('books.index', ['sort' => 'latest']) }}">
+                        {{ __('New Arrivals') }}
+                    </a>
+                </li>
 
                 @auth
                     <li class="nav-item">
@@ -46,29 +60,39 @@
                             {{ __('Dashboard') }}
                         </a>
                     </li>
+                    <li class="nav-item">
+                        <a class="nav-link {{ request()->routeIs('borrowings.*') ? 'active' : '' }}"
+                           href="{{ route('borrowings.index') }}">
+                            {{ __('My Borrowings') }}
+                        </a>
+                    </li>
                 @endauth
             </ul>
 
             {{-- Right side: user dropdown or login/register --}}
             <div class="d-flex align-items-center">
                 @auth
+                    @php
+                        /** @var \App\Models\User $currentUser */
+                        $currentUser = Auth::user();
+                    @endphp
                     <div class="dropdown">
                         <button class="btn btn-link nav-link dropdown-toggle text-decoration-none d-inline-flex align-items-center"
                                 type="button"
                                 id="userDropdown"
                                 data-bs-toggle="dropdown"
                                 aria-expanded="false">
-                            <span>{{ Auth::user()->name }}</span>
+                            <span>{{ $currentUser->name }}</span>
                         </button>
 
                         <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
                             {{-- User info --}}
                             <li class="px-3 py-2 border-bottom">
-                                <div class="fw-medium text-dark">{{ Auth::user()->name }}</div>
-                                <div class="small text-muted">{{ Auth::user()->email }}</div>
-                                @if(Auth::user()->roles)
+                                <div class="fw-medium text-dark">{{ $currentUser->name }}</div>
+                                <div class="small text-muted">{{ $currentUser->email }}</div>
+                                @if($currentUser->roles)
                                     <div class="text-muted" style="font-size: 0.75rem;">
-                                        Roles: {{ Auth::user()->getRoleNames()->join(', ') }}
+                                        Roles: {{ $currentUser->getRoleNames()->join(', ') }}
                                     </div>
                                 @endif
                             </li>

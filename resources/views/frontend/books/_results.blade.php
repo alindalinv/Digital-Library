@@ -1,7 +1,7 @@
 <div class="row g-4">
     @forelse($books as $book)
         <div class="col-12 col-sm-6 col-lg-3 catalog-card">
-            <x-frontend.book-card :book="$book" />
+            <x-frontend.book-card :book="$book" :featured="$book->is_featured" />
         </div>
     @empty
         <div class="col-12">

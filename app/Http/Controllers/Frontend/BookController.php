@@ -19,6 +19,7 @@ class BookController extends Controller
         $search = $request->string('search')->toString();
         $categoryId = $request->integer('category');
         $sort = $request->string('sort', 'latest')->toString();
+        $featured = $request->boolean('featured');
 
         $books = Book::query()
             ->with(['authors:id,name', 'category:id,name,slug'])
@@ -29,6 +30,7 @@ class BookController extends Controller
                     ->orWhereHas('authors', fn($aq) => $aq->where('name', 'like', "%{$search}%"));
             }))
             ->when($categoryId, fn($q) => $q->where('category_id', $categoryId))
+            ->when($featured, fn($q) => $q->featured())
             ->when($sort, fn($q) => match ($sort) {
                 'oldest' => $q->oldest(),
                 'price_asc' => $q->orderBy('price'),
@@ -47,7 +49,7 @@ class BookController extends Controller
 
         if ($request->ajax() || $request->wantsJson()) {
             return response()->json([
-                'html' => view('frontend.books._results', compact('books'))->render(),
+                'html' => view('frontend.books._results', compact('books', 'featured'))->render(),
                 'total' => $books->total(),
                 'current_page' => $books->currentPage(),
                 'last_page' => $books->lastPage(),
@@ -64,6 +66,7 @@ class BookController extends Controller
             'search' => $search,
             'categoryId' => $categoryId,
             'sort' => $sort,
+            'featured' => $featured,
         ]);
     }
 
