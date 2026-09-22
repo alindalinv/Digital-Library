@@ -1,6 +1,6 @@
 <?php
 
-namespace App\View\Components\profile;
+namespace App\View\Components\Admin\profile;
 
 use Closure;
 use Illuminate\Contracts\View\View;
@@ -21,6 +21,6 @@ class ProfileCard extends Component
      */
     public function render(): View|Closure|string
     {
-        return view('components.profile.profile-card');
+        return view('components.admin.profile.profile-card');
     }
 }
