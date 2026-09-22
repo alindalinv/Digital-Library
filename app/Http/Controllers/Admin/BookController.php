@@ -133,7 +133,7 @@ class BookController extends Controller
         $book->load(['category', 'publisher', 'authors', 'files', 'reviews.user']);
 
         return view('admin.pages.books.show', [
-            'title' => "Book: {$book->title}",
+            'title' => 'Book Details',
             'book' => $book,
         ]);
     }
@@ -143,7 +143,7 @@ class BookController extends Controller
         $book->load(['authors', 'files']);
 
         return view('admin.pages.books.edit', [
-            'title' => "Edit Book: {$book->title}",
+            'title' => 'Edit Book',
             'book' => $book,
             'categories' => Category::where('status', true)->orderBy('name')->get(),
             'authors' => Author::orderBy('name')->get(),
@@ -297,7 +297,7 @@ class BookController extends Controller
         $path = $request->file('file')->store('books/description-images', 'public');
 
         return response()->json([
-            'location' => Storage::disk('public')->url($path),
+            'location' => Storage::url($path),
         ]);
     }
 }

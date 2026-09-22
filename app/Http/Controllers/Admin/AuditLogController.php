@@ -44,7 +44,7 @@ class AuditLogController extends Controller
         if ($request->ajax() || $request->wantsJson()) {
             return response()->json([
                 'html' => view('admin.audit-logs._results', compact('logs'))->render(),
-                'pagination' => $logs->links()->render(),
+                'pagination' => (string) $logs->links(),
                 'total' => $logs->total(),
                 'current_page' => $logs->currentPage(),
                 'last_page' => $logs->lastPage(),

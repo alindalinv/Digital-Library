@@ -107,7 +107,7 @@ class UserController extends Controller
     {
         $data = $request->validate([
             'name'     => 'required|string|max:255',
-            'email'    => 'required|email|unique:users,email,' . $user->id,
+            'email'    => 'required|email|unique:users,email,' . $user->getKey(),
             'password' => 'nullable|string|min:8|confirmed',
             'status'   => 'boolean',
             'roles'    => 'array',
@@ -138,7 +138,7 @@ class UserController extends Controller
 
     public function destroy(User $user)
     {
-        if ($user->id === auth()->id()) {
+        if ($user->getKey() === auth()->id()) {
             return back()->with('error', 'You cannot delete your own account.');
         }
 

@@ -55,6 +55,17 @@
             </div>
 
             <div class="flex flex-wrap gap-2">
+                @if ($book->status === 'published' && $book->slug)
+                    <a href="{{ route('books.show', ['book' => $book->slug]) }}" target="_blank" rel="noopener"
+                        class="inline-flex items-center justify-center gap-2 rounded-full border border-blue-200 bg-blue-50 px-4 py-2 text-sm font-medium text-blue-700 transition hover:bg-blue-100 focus:outline-none focus:ring-2 focus:ring-blue-500/30 dark:border-blue-900/50 dark:bg-blue-900/20 dark:text-blue-400 dark:hover:bg-blue-900/40"
+                        title="Open the public book page">
+                        <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-4m-6-8h8m0 0v8m0-8L10 14" />
+                        </svg>
+                        Preview Book
+                    </a>
+                @endif
+
                 <a href="{{ route('admin.books.index') }}"
                     class="inline-flex items-center justify-center gap-2 rounded-full border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 transition hover:bg-gray-50 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-300 dark:hover:bg-gray-700">
 

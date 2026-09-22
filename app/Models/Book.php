@@ -103,7 +103,7 @@ class Book extends Model
     public function getCoverUrlAttribute(): ?string
     {
         return $this->cover_image
-            ? \Storage::disk('public')->url($this->cover_image)
+            ? \Storage::url($this->cover_image)
             : null;
     }
 }
