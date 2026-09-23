@@ -1,5 +1,5 @@
 @extends('layouts.admin.app')
 
 @section('content')
-    <x-calender-area />
+    <x-admin.calender-area />
 @endsection
