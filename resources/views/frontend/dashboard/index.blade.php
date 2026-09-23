@@ -185,7 +185,7 @@
                                                                         class="rounded object-fit-cover shadow-sm">
 
                                                                     <div class="flex-grow-1 min-w-0">
-                                                                        <h6 class="fw-semibold text-dark mb-1 text-truncate">
+                                                                        <h6 class="fw-semibold text-dark mb-1">
                                                                             {{ $borrowing->book->title }}
                                                                         </h6>
                                                                         <p class="text-secondary small mb-0">
