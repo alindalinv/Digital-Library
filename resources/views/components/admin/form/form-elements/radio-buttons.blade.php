@@ -1,4 +1,4 @@
-<x-common.component-card title="Radio Buttons">
+<x-admin.common.component-card title="Radio Buttons">
     <div class="flex flex-wrap items-center gap-8">
         <div x-data="{ checkboxToggle: false }">
             <label for="radioLabelOne"
@@ -50,4 +50,4 @@
             </label>
         </div>
     </div>
-</x-common.component-card>
+</x-admin.common.component-card>

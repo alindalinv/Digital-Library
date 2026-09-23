@@ -1,4 +1,4 @@
-<x-common.component-card title="Dropzone">
+<x-admin.common.component-card title="Dropzone">
     <!-- Dropzone -->
     <div 
         x-data="{
@@ -116,4 +116,4 @@
             </ul>
         </div>
     </div>
-</x-common.component-card>
+</x-admin.common.component-card>
