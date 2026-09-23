@@ -42,7 +42,7 @@
     >
         <style>
             .home-hero {
-                background: #1456a0;
+                background: var(--primary-color);
             }
 
             .home-hero-panel {
@@ -67,7 +67,7 @@
 
             .home-book-slider {
                 position: relative;
-                padding: 0 45px 45px;
+                padding: 0 0 45px;
             }
 
             .home-book-slider .swiper-slide {
@@ -82,24 +82,27 @@
             /* Navigation buttons */
             .home-book-slider .swiper-button-prev,
             .home-book-slider .swiper-button-next {
-                width: 40px;
-                height: 40px;
+                width: 48px;
+                height: 48px;
                 border-radius: 50%;
-                background: #fff;
+                background: var(--primary-color);
+                color:#fff !important;
                 box-shadow: 0 3px 12px rgba(0, 0, 0, .12);
             }
-
             .home-book-slider .swiper-button-prev::after,
             .home-book-slider .swiper-button-next::after {
                 font-size: 15px;
                 font-weight: 700;
             }
-
+            .home-book-slider .swiper-button-prev{left:0;}
+            .home-book-slider .swiper-button-next{right:0}
             /* Pagination */
             .home-book-slider .swiper-pagination {
                 bottom: 0;
             }
-
+            .swiper-pagination-bullet-active{
+                background: var(--primary-color) !important;
+            }
             /* Mobile */
             @media (max-width: 575.98px) {
                 .home-book-slider {
@@ -110,6 +113,10 @@
                 .home-book-slider .swiper-button-prev,
                 .home-book-slider .swiper-button-next {
                     display: none;
+                }
+                .home-book-slider {
+                    padding-left: 0;
+                    padding-right: 0;
                 }
             }
         </style>

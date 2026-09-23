@@ -1,1 +1,36 @@
 @import "bootstrap/dist/css/bootstrap.min.css";
+:root {
+    /* Brand */
+    --primary-color: #0b5ed7;
+    --primary-light:#e8f1ff;
+    --primary-dark: #0d3f78;
+    --primary-light: #eaf2fb;
+    /* Secondary */
+    --secondary-color: #6c757d;
+
+    /* Text */
+    --text-dark: #212529;
+    --text-secondary: #6c757d;
+    --text-light: #ffffff;
+
+    /* Background */
+    --bg-light: #f5f8fc;
+    --bg-white: #ffffff;
+
+    /* Border */
+    --border-color: #dee2e6;
+
+    /* Status */
+    --success-color: #198754;
+    --warning-color: #ffc107;
+    --danger-color: #dc3545;
+    --info-color: #0dcaf0;
+
+    /* UI */
+    --shadow-sm: 0 3px 12px rgba(0, 0, 0, .08);
+    --shadow-md: 0 8px 24px rgba(0, 0, 0, .12);
+
+    --radius-sm: .375rem;
+    --radius-md: .75rem;
+    --radius-lg: 1rem;
+}

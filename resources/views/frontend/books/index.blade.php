@@ -13,20 +13,20 @@
             <span class="text-secondary small">{{ $books->total() }} titles to explore</span>
         </div>
     </x-slot>
-
+    @push('css')
     <style>
         .catalog-hero { background: linear-gradient(120deg, #eef5ff 0%, #f8fbff 55%, #fff 100%); }
         .catalog-filter { border: 1px solid #dce5f1; box-shadow: 0 0.5rem 1.5rem rgba(31, 51, 73, .06); }
-        .catalog-card { transition: transform .2s ease, box-shadow .2s ease; }
-        .catalog-card:hover { transform: translateY(-4px); box-shadow: 0 1rem 2rem rgba(31, 51, 73, .12) !important; }
+        .catalog-card { transition: transform .2s ease; }
+        .catalog-card:hover { transform: translateY(-4px);}
         .catalog-cover { height: 260px; object-fit: cover; background: #edf2f7; }
         @media (max-width: 575.98px) { .catalog-cover { height: 230px; } }
     </style>
-
+    @endpush
     <div class="py-5">
         <div class="container">
             <section class="catalog-hero rounded-4 p-4 p-lg-5 mb-4">
-                <div class="row align-items-end g-4">
+                <div class="row align-items-end">
                     <div class="col-lg-6">
                         <p class="text-primary fw-semibold mb-2">Find your next read</p>
                         <h1 class="display-6 fw-bold text-dark mb-2">A better way to browse.</h1>

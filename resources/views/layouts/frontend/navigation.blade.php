@@ -6,9 +6,9 @@
 @endphp
 
 <style>
-    .frontend-nav .nav-link { border-radius: .65rem; color: #5b6573; font-weight: 500; padding: .5rem .75rem; transition: color .15s ease, background-color .15s ease; }
-    .frontend-nav .nav-link:hover, .frontend-nav .nav-link:focus-visible { background: #f1f5f9; color: #0d6efd; }
-    .frontend-nav .nav-link.active { background: #e8f1ff; color: #0b5ed7; font-weight: 600; }
+    .frontend-nav .nav-link { border-radius: .75rem; color: #5b6573; font-weight: 500; padding: .5rem 1rem; transition: color .15s ease, background-color .15s ease;margin-right: 0.5rem; }
+    .frontend-nav .nav-link:hover, .frontend-nav .nav-link:focus-visible { background: #f1f5f9; color: var(--primary-color); }
+    .frontend-nav .nav-link.active { background: #e8f1ff; color: var(--primary-color); font-weight: 600; }
     .frontend-nav .user-trigger { color: #344054; }
     @media (max-width: 575.98px) {
         .frontend-nav .navbar-nav { padding-top: .75rem; }
