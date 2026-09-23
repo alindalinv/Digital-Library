@@ -1,4 +1,4 @@
-<x-common.component-card title="Default Inputs">
+<x-admin.common.component-card title="Default Inputs">
     <!-- Elements -->
     <div>
         <label class="mb-1.5 block text-sm font-medium text-gray-700">
@@ -130,4 +130,4 @@
             </span>
         </div>
     </div>
-</x-common.component-card>
+</x-admin.common.component-card>

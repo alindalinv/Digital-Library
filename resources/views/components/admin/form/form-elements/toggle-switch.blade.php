@@ -1,4 +1,4 @@
-<x-common.component-card title="Toggle switch input">
+<x-admin.common.component-card title="Toggle switch input">
     <!-- Elements -->
     <div class="mb-6 flex flex-wrap items-center gap-6 sm:gap-8">
         <div x-data="{ switcherToggle: false }">
@@ -107,4 +107,4 @@
             </label>
         </div>
     </div>
-</x-common.component-card>
+</x-admin.common.component-card>

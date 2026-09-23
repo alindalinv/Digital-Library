@@ -1,4 +1,4 @@
-<x-common.component-card title="Select Inputs">
+<x-admin.common.component-card title="Select Inputs">
     <div>
         <label class="mb-1.5 block text-sm font-medium text-gray-700">
             Select Input
@@ -32,5 +32,5 @@
     </div>
 
     {{-- multiple select --}}
-    <x-form.select.multiple-select/>
-</x-common.component-card>
+    <x-admin.form.select.multiple-select/>
+</x-admin.common.component-card>
