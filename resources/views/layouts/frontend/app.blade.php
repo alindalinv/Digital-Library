@@ -19,6 +19,7 @@
             'resources/assets/frontend/js/app.js'
         ]
     )
+    @stack('css')
 </head>
 
 <body>
