@@ -155,7 +155,7 @@
         Results container (AJAX replaces inner content)
         ========================================================== --}}
         <div id="booksResults" class="px-5 pb-5 lg:px-6 lg:pb-6">
-            @include('admin.pages.books._results', ['books' => $books, 'search' => $search, 'status' => $status])
+            @include('admin.books._results', ['books' => $books, 'search' => $search, 'status' => $status])
         </div>
 
     </div>

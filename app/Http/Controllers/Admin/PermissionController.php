@@ -29,7 +29,7 @@ class PermissionController extends Controller
             ->paginate(15)
             ->withQueryString();
 
-        return view('admin.pages.permissions.index', [
+        return view('admin.permissions.index', [
             'title'       => 'Permissions',
             'permissions' => $permissions,
             'search'      => $search,
@@ -48,7 +48,7 @@ class PermissionController extends Controller
             ->unique()
             ->values();
 
-        return view('admin.pages.permissions.create', [
+        return view('admin.permissions.create', [
             'title'  => 'Create Permission',
             'groups' => $groups,
         ]);
@@ -87,7 +87,7 @@ class PermissionController extends Controller
     {
         $permission->load('roles');
 
-        return view('admin.pages.permissions.show', [
+        return view('admin.permissions.show', [
             'title'      => "Permission: {$permission->name}",
             'permission' => $permission,
         ]);

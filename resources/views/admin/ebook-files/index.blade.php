@@ -17,7 +17,7 @@
                 class="w-full max-w-md rounded-lg border border-gray-300 bg-transparent px-3 py-2 text-sm dark:border-gray-700 dark:text-white">
         </form>
 
-        <div id="ebookFileResults">@include('admin.pages.ebook-files._results')</div>
+        <div id="ebookFileResults">@include('admin.ebook-files._results')</div>
     </div>
 @endsection
 

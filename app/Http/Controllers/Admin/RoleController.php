@@ -29,7 +29,7 @@ class RoleController extends Controller
             ->paginate(10)
             ->withQueryString();
 
-        return view('admin.pages.roles.index', [
+        return view('admin.roles.index', [
             'title'   => 'Roles',
             'roles'   => $roles,
             'search'  => $search,
@@ -49,7 +49,7 @@ class RoleController extends Controller
                 return Str::before($permission->name, '.');
             });
 
-        return view('admin.pages.roles.create', [
+        return view('admin.roles.create', [
             'title'       => 'Create Role',
             'permissions' => $permissions,
         ]);
@@ -88,7 +88,7 @@ class RoleController extends Controller
     {
         $role->load(['permissions', 'users']);
 
-        return view('admin.pages.roles.show', [
+        return view('admin.roles.show', [
             'title' => "Role: {$role->name}",
             'role'  => $role,
         ]);
@@ -108,7 +108,7 @@ class RoleController extends Controller
 
         $rolePermissions = $role->permissions->pluck('name')->toArray();
 
-        return view('admin.pages.roles.edit', [
+        return view('admin.roles.edit', [
             'title'           => "Edit Role: {$role->name}",
             'role'            => $role,
             'permissions'     => $permissions,

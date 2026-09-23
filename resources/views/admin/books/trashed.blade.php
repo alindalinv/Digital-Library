@@ -85,7 +85,7 @@
         Results
         ========================================================== --}}
         <div id="trashedResults">
-            @include('admin.pages.books._trashed_results', ['books' => $books, 'search' => $search ?? ''])
+            @include('admin.books._trashed_results', ['books' => $books, 'search' => $search ?? ''])
         </div>
 
     </div>

@@ -15,7 +15,7 @@ class AuthenticatedSessionController extends Controller
      */
     public function create(): View|RedirectResponse
     {
-        return view('admin.pages.auth.signin');
+        return view('admin.auth.signin');
     }
 
     /**

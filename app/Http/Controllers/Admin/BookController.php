@@ -38,7 +38,7 @@ class BookController extends Controller
         // AJAX response
         if ($request->ajax() || $request->wantsJson()) {
             return response()->json([
-                'html' => view('admin.pages.books._results', [
+                'html' => view('admin.books._results', [
                     'books' => $books,
                     'search' => $search,
                     'status' => $status,
@@ -48,7 +48,7 @@ class BookController extends Controller
             ]);
         }
 
-        return view('admin.pages.books.index', [
+        return view('admin.books.index', [
             'title' => 'Books',
             'books' => $books,
             'search' => $search,
@@ -74,7 +74,7 @@ class BookController extends Controller
         // AJAX response
         if ($request->ajax() || $request->wantsJson()) {
             return response()->json([
-                'html' => view('admin.pages.books._trashed_results', [
+                'html' => view('admin.books._trashed_results', [
                     'books' => $books,
                     'search' => $search,
                 ])->render(),
@@ -82,7 +82,7 @@ class BookController extends Controller
             ]);
         }
 
-        return view('admin.pages.books.trashed', [
+        return view('admin.books.trashed', [
             'title' => 'Trashed Books',
             'books' => $books,
             'search' => $search,
@@ -91,7 +91,7 @@ class BookController extends Controller
 
     public function create(): View
     {
-        return view('admin.pages.books.create', [
+        return view('admin.books.create', [
             'title' => 'Create Book',
             'categories' => Category::where('status', true)->orderBy('name')->get(),
             'authors' => Author::orderBy('name')->get(),
@@ -132,7 +132,7 @@ class BookController extends Controller
     {
         $book->load(['category', 'publisher', 'authors', 'files', 'reviews.user']);
 
-        return view('admin.pages.books.show', [
+        return view('admin.books.show', [
             'title' => 'Book Details',
             'book' => $book,
         ]);
@@ -142,7 +142,7 @@ class BookController extends Controller
     {
         $book->load(['authors', 'files']);
 
-        return view('admin.pages.books.edit', [
+        return view('admin.books.edit', [
             'title' => 'Edit Book',
             'book' => $book,
             'categories' => Category::where('status', true)->orderBy('name')->get(),

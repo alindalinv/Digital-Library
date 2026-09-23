@@ -33,19 +33,19 @@ class EbookFileController extends Controller
 
         if ($request->ajax() || $request->wantsJson()) {
             return response()->json([
-                'html' => view('admin.pages.ebook-files._results', compact('ebookFiles'))->render(),
+                'html' => view('admin.ebook-files._results', compact('ebookFiles'))->render(),
                 'total' => $ebookFiles->total(),
             ]);
         }
 
-        return view('admin.pages.ebook-files.index', compact('ebookFiles', 'search') + [
+        return view('admin.ebook-files.index', compact('ebookFiles', 'search') + [
             'title' => 'E-book Files',
         ]);
     }
 
     public function create(Request $request): View
     {
-        return view('admin.pages.ebook-files.create', [
+        return view('admin.ebook-files.create', [
             'books' => Book::orderBy('title')->get(['id', 'title', 'isbn']),
             'selectedBookId' => $request->integer('book_id') ?: null,
             'title' => 'Upload E-book File',
@@ -81,14 +81,14 @@ class EbookFileController extends Controller
     public function show(EbookFile $ebookFile): View
     {
         $ebookFile->load('book:id,title,isbn');
-        return view('admin.pages.ebook-files.show', compact('ebookFile') + [
+        return view('admin.ebook-files.show', compact('ebookFile') + [
             'title' => 'E-book File',
         ]);
     }
 
     public function edit(EbookFile $ebookFile): View
     {
-        return view('admin.pages.ebook-files.edit', [
+        return view('admin.ebook-files.edit', [
             'ebookFile' => $ebookFile,
             'books' => Book::orderBy('title')->get(['id', 'title', 'isbn']),
             'title' => 'Edit E-book File',

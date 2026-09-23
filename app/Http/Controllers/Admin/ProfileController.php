@@ -19,7 +19,7 @@ class ProfileController extends Controller
      */
     public function edit(Request $request): View
     {
-        return view('admin.pages.profile.index', [
+        return view('admin.profile.index', [
             'title' => 'Edit Profile',
             'user'  => $request->user('admin'),
         ]);
