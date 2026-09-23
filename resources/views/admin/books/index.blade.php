@@ -32,23 +32,29 @@
         ];
     @endphp
 
-    <div class="overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-sm dark:border-gray-800 dark:bg-gray-900">
+    <div
+        class="overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-sm dark:border-gray-800 dark:bg-gray-900">
 
         {{-- =========================================================
         Header
         ========================================================== --}}
-        <div class="flex flex-col gap-4 border-b border-gray-200 px-5 py-5 sm:flex-row sm:items-center sm:justify-between lg:px-6 dark:border-gray-800">
+        <div
+            class="flex flex-col gap-4 border-b border-gray-200 px-5 py-5 sm:flex-row sm:items-center sm:justify-between lg:px-6 dark:border-gray-800">
             <div class="flex items-center gap-3">
-                <div class="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-blue-50 text-blue-600 dark:bg-blue-500/10 dark:text-blue-400">
-                    <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.7" d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2Z"/></svg>
+                <div
+                    class="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-blue-50 text-blue-600 dark:bg-blue-500/10 dark:text-blue-400">
+                    <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.7"
+                            d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2Z" />
+                    </svg>
                 </div>
                 <div>
-                <h3 class="text-lg font-semibold text-gray-800 dark:text-white/90">
-                    Books
-                </h3>
-                <p class="mt-0.5 text-sm text-gray-500 dark:text-gray-400">
-                    Manage your library catalog.
-                </p>
+                    <h3 class="text-lg font-semibold text-gray-800 dark:text-white/90">
+                        Books
+                    </h3>
+                    <p class="mt-0.5 text-sm text-gray-500 dark:text-gray-400">
+                        Manage your library catalog.
+                    </p>
                 </div>
             </div>
 
@@ -80,19 +86,20 @@
         {{-- =========================================================
         Filters Bar: Status tabs + Featured toggle + Search
         ========================================================== --}}
-        <div class="mx-5 my-5 flex flex-col gap-4 rounded-xl border border-gray-200 bg-gray-50/70 p-3.5 lg:flex-row lg:items-center lg:justify-between dark:border-gray-800 dark:bg-gray-800/30">
+        <div
+            class="mx-5 my-5 flex flex-col gap-4 rounded-xl border border-gray-200 bg-gray-50/70 p-3.5 lg:flex-row lg:items-center lg:justify-between dark:border-gray-800 dark:bg-gray-800/30">
 
             <div class="flex flex-wrap items-center gap-3">
 
                 {{-- Status Tabs --}}
-                <div class="flex flex-wrap items-center gap-1 rounded-lg bg-white p-1 shadow-sm ring-1 ring-gray-200 dark:bg-gray-900 dark:ring-gray-700" role="tablist"
-                    aria-label="Filter books by status">
+                <div class="flex flex-wrap items-center gap-1 rounded-lg bg-white p-1 shadow-sm ring-1 ring-gray-200 dark:bg-gray-900 dark:ring-gray-700"
+                    role="tablist" aria-label="Filter books by status">
 
                     @foreach ($statusTabs as $value => $label)
                                 <button type="button" role="tab" data-status="{{ $value }}"
                                     aria-selected="{{ $activeStatus === $value ? 'true' : 'false' }}" class="status-tab rounded-md px-3 py-1.5 text-sm font-medium transition
-                                                                            {{ $activeStatus === $value
-                                                                ? 'bg-blue-50 text-blue-700 shadow-sm dark:bg-blue-500/10 dark:text-blue-400'
+                                                                                                            {{ $activeStatus === $value
+                        ? 'bg-blue-50 text-blue-700 shadow-sm dark:bg-blue-500/10 dark:text-blue-400'
                         : 'text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200' }}">
                                     {{ $label }}
                                 </button>
@@ -104,7 +111,7 @@
                 <button type="button" id="featuredFilter" data-featured="{{ $featured ? 'true' : 'false' }}"
                     aria-pressed="{{ $featured ? 'true' : 'false' }}"
                     class="featured-toggle inline-flex items-center gap-1.5 rounded-lg border px-3 py-1.5 text-sm font-medium transition
-                                   {{ $featured
+                                           {{ $featured
         ? 'border-amber-300 bg-amber-50 text-amber-700 dark:border-amber-700 dark:bg-amber-900/30 dark:text-amber-400'
         : 'border-gray-300 bg-white text-gray-600 hover:bg-gray-50 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-300 dark:hover:bg-gray-700' }}">
 
@@ -268,9 +275,9 @@
                         if (err.name === 'AbortError') return;
                         console.error('Search failed:', err);
                         resultsBox.innerHTML = `
-                        <div class="rounded-lg border border-red-200 bg-red-50 p-4 text-sm text-red-700 dark:border-red-900/50 dark:bg-red-900/10 dark:text-red-400">
-                            Failed to load results. Please try again.
-                        </div>`;
+                                        <div class="rounded-lg border border-red-200 bg-red-50 p-4 text-sm text-red-700 dark:border-red-900/50 dark:bg-red-900/10 dark:text-red-400">
+                                            Failed to load results. Please try again.
+                                        </div>`;
                     } finally {
                         searchSpinner.classList.add('hidden');
                     }
@@ -342,24 +349,65 @@
                 const bindDeleteButtons = () => {
                     document.querySelectorAll('[data-delete-book]').forEach((btn) => {
                         btn.addEventListener('click', async () => {
-                            const { bookId, bookTitle } = btn.dataset;
-                            if (!confirm(`Move "${bookTitle}" to trash?`)) return;
+                            const { bookId, bookTitle, redirectUrl } = btn.dataset;
+
+                            if (!bookId) {
+                                console.error('Book ID is missing.');
+                                return;
+                            }
+
+                            if (!redirectUrl) {
+                                console.error('Trash redirect URL is missing.');
+                                alert('Trash page URL is missing.');
+                                return;
+                            }
+
+                            if (!confirm(`Move "${bookTitle}" to trash?`)) {
+                                return;
+                            }
 
                             btn.disabled = true;
+
                             try {
-                                const response = await fetch(`/admin/books/${bookId}`, {
-                                    method: 'DELETE',
-                                    headers: {
-                                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.content || '',
-                                        'X-Requested-With': 'XMLHttpRequest',
-                                        'Accept': 'application/json',
-                                    },
-                                });
-                                if (!response.ok) throw new Error(`HTTP ${response.status}`);
-                                fetchResults();
+                                const csrfToken = document.querySelector(
+                                    'meta[name="csrf-token"]'
+                                )?.content;
+
+                                if (!csrfToken) {
+                                    throw new Error('CSRF token not found.');
+                                }
+
+                                const response = await fetch(
+                                    `/admin/books/${encodeURIComponent(bookId)}`,
+                                    {
+                                        method: 'DELETE',
+                                        headers: {
+                                            'X-CSRF-TOKEN': csrfToken,
+                                            'X-Requested-With': 'XMLHttpRequest',
+                                            'Accept': 'application/json',
+                                        },
+                                    }
+                                );
+
+                                const data = await response.json();
+
+                                if (!response.ok || !data.success) {
+                                    throw new Error(
+                                        data.message || `HTTP ${response.status}`
+                                    );
+                                }
+
+                                // Delete successful → go directly to Trash
+                                window.location.assign(redirectUrl);
+
                             } catch (err) {
                                 console.error('Delete failed:', err);
-                                alert('Failed to delete the book. Please try again.');
+
+                                alert(
+                                    err.message ||
+                                    'Failed to move the book to trash. Please try again.'
+                                );
+
                                 btn.disabled = false;
                             }
                         });

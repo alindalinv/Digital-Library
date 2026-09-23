@@ -179,13 +179,19 @@ class BookController extends Controller
             ->with('success', 'Book updated successfully.');
     }
 
-    public function destroy(Book $book): RedirectResponse
+    public function destroy(Book $book): RedirectResponse|JsonResponse
     {
         $book->delete();
 
+        if (request()->expectsJson()) {
+            return response()->json([
+                'success' => true,
+                'message' => 'Book moved to trash successfully.',
+            ]);
+        }
         return redirect()
-            ->route('admin.books.index')
-            ->with('success', 'Book moved to trash.');
+            ->route('admin.books.trashed')
+            ->with('success', 'Book moved to trash successfully.');
     }
 
     public function restore(int $id): RedirectResponse|JsonResponse
@@ -272,7 +278,7 @@ class BookController extends Controller
                 'file_path' => $file->store('ebooks', 'public'),
                 'file_type' => strtolower($file->getClientOriginalExtension()),
                 'file_size' => $file->getSize(),
-                'is_primary' => ! $hasPrimary,
+                'is_primary' => !$hasPrimary,
             ]);
 
             $hasPrimary = true;
