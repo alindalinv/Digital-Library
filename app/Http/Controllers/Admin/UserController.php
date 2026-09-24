@@ -73,9 +73,9 @@ class UserController extends Controller
         $data = $request->validate([
             'name' => 'required|string|max:255',
             'first_name' => ['required', 'string', 'max:100'],
-            'last_name'  => ['required', 'string', 'max:100'],
+            'last_name' => ['required', 'string', 'max:100'],
             'email' => 'required|email|unique:users,email',
-            'password'   => ['required', 'string', 'min:8', 'confirmed'],
+            'password' => ['required', 'string', 'min:8', 'confirmed'],
             'status' => 'boolean',
             'roles' => 'array',
             'roles.*' => 'exists:roles,name',
@@ -95,20 +95,32 @@ class UserController extends Controller
             ->with('success', 'User created successfully.');
     }
 
-    public function show(User $user)
+    public function show(User $user): View
     {
         $user->load('roles', 'permissions');
-        return view('admin.users.show', compact('user'));
+
+        return view('admin.users.show', [
+            'user' => $user,
+            'title' => 'User — ' . $user->name,
+        ]);
     }
 
-    public function edit(User $user)
+    public function edit(User $user): View
     {
         $roles = Role::all();
-        return view('admin.users.edit', compact('user', 'roles'));
+        return view('admin.users.edit', [
+            'user' => $user,
+            'roles' => $roles,
+            'title' => 'Edit User — ' . $user->name,
+        ]);
     }
 
     public function update(Request $request, User $user)
     {
+        $request->merge([
+            'name' => trim($request->input('first_name', '') . ' ' . $request->input('last_name', '')),
+        ]);
+
         $data = $request->validate([
             'name' => ['required', 'string', 'max:255'],
             'first_name' => ['required', 'string', 'max:100'],
@@ -127,23 +139,23 @@ class UserController extends Controller
             unset($data['password']);
         }
 
-        // Roles (extract before fill)
+        // Roles — extract before fill
         $roles = $data['roles'] ?? [];
         unset($data['roles']);
-
-        // Status (form sends "1" or "0")
+        if (empty($roles)) {
+            $roles = ['member']; 
+        }
+        // Status — form sends "1" or "0"
         $data['status'] = $request->boolean('status') ? 1 : 0;
 
-        // Persist
+        // Persist user fields
         $user->forceFill($data)->save();
 
-        // Sync roles only when the field was submitted
-        if ($request->has('roles')) {
-            $user->syncRoles($roles);
-        }
+        // ✅ Always sync roles — empty array clears all
+        $user->syncRoles($roles);
 
         return redirect()
-            ->route('admin.users.index')
+            ->route('admin.users.show',$user)
             ->with('success', 'User updated successfully.');
     }
 

@@ -16,36 +16,46 @@
                     <td class="px-6 py-4 text-gray-500 dark:text-gray-400">{{ $users->firstItem() + $loop->index }}</td>
                     <td class="px-6 py-4 font-medium text-gray-800 dark:text-white">{{ $user->name }}</td>
                     <td class="px-6 py-4 text-gray-500 dark:text-gray-400">{{ $user->email }}</td>
-                    <td class="px-6 py-4"><div class="flex flex-wrap gap-1">
-                        @forelse ($user->roles as $role)
-                            <span class="inline-flex rounded-full bg-brand-50 px-2.5 py-0.5 text-xs font-medium text-brand-600 dark:bg-brand-500/10 dark:text-brand-400">{{ $role->name }}</span>
-                        @empty
-                            <span class="text-xs text-gray-400">No role</span>
-                        @endforelse
-                    </div></td>
+                    <td class="px-6 py-4">
+                        <div class="flex flex-wrap gap-1">
+                            @forelse ($user->roles as $role)
+                                <span class="badge bg-primary-subtle text-primary-emphasis">{{ $role->name }}</span>
+                            @empty
+                                <span class="text-muted">—</span>
+                            @endforelse
+                        </div>
+                    </td>
                     <td class="px-6 py-4">
                         @if ($user->status)
-                            <span class="inline-flex rounded-full bg-green-100 px-2.5 py-0.5 text-xs font-medium text-green-700 dark:bg-green-500/10 dark:text-green-400">Active</span>
+                            <span
+                                class="inline-flex rounded-full bg-green-100 px-2.5 py-0.5 text-xs font-medium text-green-700 dark:bg-green-500/10 dark:text-green-400">Active</span>
                         @else
-                            <span class="inline-flex rounded-full bg-gray-100 px-2.5 py-0.5 text-xs font-medium text-gray-600 dark:bg-gray-700 dark:text-gray-400">Inactive</span>
+                            <span
+                                class="inline-flex rounded-full bg-gray-100 px-2.5 py-0.5 text-xs font-medium text-gray-600 dark:bg-gray-700 dark:text-gray-400">Inactive</span>
                         @endif
                     </td>
                     <td class="px-6 py-4 text-right">
-                        <a href="{{ route('admin.users.show', $user) }}" class="text-gray-500 hover:text-gray-700 dark:text-gray-400">View</a>
+                        <a href="{{ route('admin.users.show', $user) }}"
+                            class="text-gray-500 hover:text-gray-700 dark:text-gray-400">View</a>
                         @can('users.update')
-                            <a href="{{ route('admin.users.roles.edit', $user) }}" class="ml-3 text-brand-500 hover:text-brand-600">Roles</a>
-                            <a href="{{ route('admin.users.edit', $user) }}" class="ml-3 text-brand-500 hover:text-brand-600">Edit</a>
+                            <a href="{{ route('admin.users.roles.edit', $user) }}"
+                                class="ml-3 text-brand-500 hover:text-brand-600">Roles</a>
+                            <a href="{{ route('admin.users.edit', $user) }}"
+                                class="ml-3 text-brand-500 hover:text-brand-600">Edit</a>
                         @endcan
                         @can('users.delete')
                             <form action="{{ route('admin.users.destroy', $user) }}" method="POST" class="inline">
                                 @csrf @method('DELETE')
-                                <button onclick="return confirm('Delete this user?')" class="ml-3 text-red-500 hover:text-red-600">Delete</button>
+                                <button onclick="return confirm('Delete this user?')"
+                                    class="ml-3 text-red-500 hover:text-red-600">Delete</button>
                             </form>
                         @endcan
                     </td>
                 </tr>
             @empty
-                <tr><td colspan="6" class="px-6 py-12 text-center text-gray-400">No users found.</td></tr>
+                <tr>
+                    <td colspan="6" class="px-6 py-12 text-center text-gray-400">No users found.</td>
+                </tr>
             @endforelse
         </tbody>
     </table>
