@@ -19,7 +19,6 @@ class UserController extends Controller
         $this->middleware('permission:users.update')->only(['edit', 'update', 'editRoles', 'updateRoles']);
         $this->middleware('permission:users.delete')->only(['destroy']);
     }
-
     /* ------------------------------------------------------------------ */
     /* CRUD                                                                */
     /* ------------------------------------------------------------------ */
@@ -29,18 +28,18 @@ class UserController extends Controller
         $search = $request->string('search')->trim()->toString();
         $status = $request->string('status', 'all')->toString();
 
-        if (! in_array($status, ['all', 'active', 'inactive'], true)) {
+        if (!in_array($status, ['all', 'active', 'inactive'], true)) {
             $status = 'all';
         }
 
         $users = User::with('roles')
-            ->when($search, fn ($query) => $query->where(function ($query) use ($search) {
+            ->when($search, fn($query) => $query->where(function ($query) use ($search) {
                 $query->where('name', 'like', "%{$search}%")
                     ->orWhere('email', 'like', "%{$search}%")
                     ->orWhere('first_name', 'like', "%{$search}%")
                     ->orWhere('last_name', 'like', "%{$search}%");
             }))
-            ->when($status !== 'all', fn ($query) => $query->where('status', $status === 'active'))
+            ->when($status !== 'all', fn($query) => $query->where('status', $status === 'active'))
             ->latest()
             ->paginate(15)
             ->withQueryString();
@@ -68,13 +67,18 @@ class UserController extends Controller
 
     public function store(Request $request)
     {
+        $request->merge([
+            'name' => trim($request->input('first_name', '') . ' ' . $request->input('last_name', '')),
+        ]);
         $data = $request->validate([
-            'name'     => 'required|string|max:255',
-            'email'    => 'required|email|unique:users,email',
-            'password' => 'required|string|min:8|confirmed',
-            'status'   => 'boolean',
-            'roles'    => 'array',
-            'roles.*'  => 'exists:roles,name',
+            'name' => 'required|string|max:255',
+            'first_name' => ['required', 'string', 'max:100'],
+            'last_name'  => ['required', 'string', 'max:100'],
+            'email' => 'required|email|unique:users,email',
+            'password'   => ['required', 'string', 'min:8', 'confirmed'],
+            'status' => 'boolean',
+            'roles' => 'array',
+            'roles.*' => 'exists:roles,name',
         ]);
 
         $status = $request->boolean('status') ? 1 : 0;
@@ -83,7 +87,7 @@ class UserController extends Controller
         $user = User::create(collect($data)->except('status')->all());
         $user->forceFill(['status' => $status])->save();
 
-        if (! empty($data['roles'])) {
+        if (!empty($data['roles'])) {
             $user->syncRoles($data['roles']);
         }
 
@@ -106,33 +110,40 @@ class UserController extends Controller
     public function update(Request $request, User $user)
     {
         $data = $request->validate([
-            'name'     => 'required|string|max:255',
-            'email'    => 'required|email|unique:users,email,' . $user->getKey(),
-            'password' => 'nullable|string|min:8|confirmed',
-            'status'   => 'boolean',
-            'roles'    => 'array',
-            'roles.*'  => 'exists:roles,name',
+            'name' => ['required', 'string', 'max:255'],
+            'first_name' => ['required', 'string', 'max:100'],
+            'last_name' => ['required', 'string', 'max:100'],
+            'email' => ['required', 'email', 'unique:users,email,' . $user->id],
+            'password' => ['nullable', 'string', 'min:8', 'confirmed'],
+            'status' => ['boolean'],
+            'roles' => ['array'],
+            'roles.*' => ['exists:roles,name'],
         ]);
 
-        if (! empty($data['password'])) {
+        // Password
+        if (!empty($data['password'])) {
             $data['password'] = Hash::make($data['password']);
         } else {
             unset($data['password']);
         }
 
+        // Roles (extract before fill)
         $roles = $data['roles'] ?? [];
         unset($data['roles']);
 
-        $user->forceFill([
-            ...collect($data)->except('status')->all(),
-            'status' => $request->boolean('status') ? 1 : 0,
-        ])->save();
+        // Status (form sends "1" or "0")
+        $data['status'] = $request->boolean('status') ? 1 : 0;
 
+        // Persist
+        $user->forceFill($data)->save();
+
+        // Sync roles only when the field was submitted
         if ($request->has('roles')) {
             $user->syncRoles($roles);
         }
 
-        return redirect()->route('admin.users.index')
+        return redirect()
+            ->route('admin.users.index')
             ->with('success', 'User updated successfully.');
     }
 
@@ -162,7 +173,7 @@ class UserController extends Controller
     public function updateRoles(Request $request, User $user)
     {
         $data = $request->validate([
-            'roles'   => 'array',
+            'roles' => 'array',
             'roles.*' => 'exists:roles,name',
         ]);
 

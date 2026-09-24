@@ -9,11 +9,30 @@
         @csrf
         @method('PUT')
 
-        <div>
-            <label class="mb-1 block text-sm font-medium text-gray-700 dark:text-gray-300">Name</label>
-            <input type="text" name="name" value="{{ old('name', $user->name) }}" required
-                class="w-full rounded-lg border border-gray-300 px-4 py-2.5 text-sm dark:border-gray-700 dark:bg-gray-800 dark:text-white">
-            @error('name') <p class="mt-1 text-xs text-red-500">{{ $message }}</p> @enderror
+        <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
+            <div>
+                <label for="first_name" class="mb-1 block text-sm font-medium text-gray-700 dark:text-gray-300">
+                    First name
+                </label>
+                <input type="text" id="first_name" name="first_name"
+                    placeholder="Jane"
+                    value="{{ old('first_name', $user->first_name ?? '') }}"
+                    required
+                    class="w-full rounded-lg border border-gray-300 px-4 py-2.5 text-sm dark:border-gray-700 dark:bg-gray-800 dark:text-white">
+                @error('first_name') <p class="mt-1 text-xs text-red-500">{{ $message }}</p> @enderror
+            </div>
+
+            <div>
+                <label for="last_name" class="mb-1 block text-sm font-medium text-gray-700 dark:text-gray-300">
+                    Last name
+                </label>
+                <input type="text" id="last_name" name="last_name"
+                    placeholder="Doe"
+                    value="{{ old('last_name', $user->last_name ?? '') }}"
+                    required
+                    class="w-full rounded-lg border border-gray-300 px-4 py-2.5 text-sm dark:border-gray-700 dark:bg-gray-800 dark:text-white">
+                @error('last_name') <p class="mt-1 text-xs text-red-500">{{ $message }}</p> @enderror
+            </div>
         </div>
 
         <div>
