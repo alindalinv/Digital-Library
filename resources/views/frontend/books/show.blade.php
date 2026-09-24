@@ -13,7 +13,7 @@
                     @if ($book->category)
                         <li class="breadcrumb-item">
                             <a href="{{ route('books.index', ['category' => $book->category->id]) }}"
-                               class="text-decoration-none">
+                                class="text-decoration-none">
                                 {{ $book->category->name }}
                             </a>
                         </li>
@@ -52,11 +52,11 @@
                         @if ($book->cover_url)
                             <div class="rounded-3 shadow-sm overflow-hidden">
                                 <img src="{{ $book->cover_url }}" alt="{{ $book->title }} cover" loading="lazy"
-                                     class="object-fit-cover w-100 h-100">
+                                    class="object-fit-cover w-100 h-100">
                             </div>
                         @else
                             <div class="bg-secondary-subtle rounded-3 d-flex align-items-center justify-content-center"
-                                 style="aspect-ratio: 2/3;">
+                                style="aspect-ratio: 2/3;">
                                 <span style="font-size: 5rem;" aria-hidden="true">📖</span>
                             </div>
                         @endif
@@ -92,7 +92,7 @@
                     <div class="d-flex flex-wrap gap-2 mb-3">
                         @if ($book->category)
                             <a href="{{ route('books.index', ['category' => $book->category->id]) }}"
-                               class="badge bg-primary-subtle text-primary-emphasis text-decoration-none">
+                                class="badge bg-primary-subtle text-primary-emphasis text-decoration-none">
                                 {{ $book->category->name }}
                             </a>
                         @endif
@@ -144,10 +144,11 @@
 
                         @if ($book->stock > 0)
                             <button type="button" class="btn btn-primary btn-lg px-4" data-add-to-cart
-                                    data-book-id="{{ $book->id }}">
+                                data-book-id="{{ $book->id }}">
                                 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
-                                     viewBox="0 0 16 16" class="me-1" aria-hidden="true">
-                                    <path d="M0 1.5A.5.5 0 0 1 .5 1H2a.5.5 0 0 1 .485.379L2.89 3H14.5a.5.5 0 0 1 .49.598l-1 5a.5.5 0 0 1-.465.401l-9.397.472L4.415 11H13a.5.5 0 0 1 0 1H4a.5.5 0 0 1-.491-.408L2.01 3.607 1.61 2H.5a.5.5 0 0 1-.5-.5zM3.102 4l.84 4.479 9.144-.459L13.89 4H3.102zM5 12a2 2 0 1 0 0 4 2 2 0 0 0 0-4zm7 0a2 2 0 1 0 0 4 2 2 0 0 0 0-4z"/>
+                                    viewBox="0 0 16 16" class="me-1" aria-hidden="true">
+                                    <path
+                                        d="M0 1.5A.5.5 0 0 1 .5 1H2a.5.5 0 0 1 .485.379L2.89 3H14.5a.5.5 0 0 1 .49.598l-1 5a.5.5 0 0 1-.465.401l-9.397.472L4.415 11H13a.5.5 0 0 1 0 1H4a.5.5 0 0 1-.491-.408L2.01 3.607 1.61 2H.5a.5.5 0 0 1-.5-.5zM3.102 4l.84 4.479 9.144-.459L13.89 4H3.102zM5 12a2 2 0 1 0 0 4 2 2 0 0 0 0-4zm7 0a2 2 0 1 0 0 4 2 2 0 0 0 0-4z" />
                                 </svg>
                                 Add to Cart
                             </button>
@@ -177,11 +178,12 @@
                         @endif
 
                         <button type="button" class="btn btn-outline-secondary" data-share
-                                data-share-url="{{ url()->current() }}" data-share-title="{{ $book->title }}"
-                                aria-label="Share this book">
+                            data-share-url="{{ url()->current() }}" data-share-title="{{ $book->title }}"
+                            aria-label="Share this book">
                             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
-                                 viewBox="0 0 16 16" aria-hidden="true">
-                                <path d="M11 2.5a2.5 2.5 0 1 1 .603 1.628l-6.718 3.12a2.499 2.499 0 0 1 0 1.504l6.718 3.12a2.5 2.5 0 1 1-.488.876l-6.718-3.12a2.5 2.5 0 1 1 0-3.256l6.718-3.12A2.5 2.5 0 0 1 11 2.5z"/>
+                                viewBox="0 0 16 16" aria-hidden="true">
+                                <path
+                                    d="M11 2.5a2.5 2.5 0 1 1 .603 1.628l-6.718 3.12a2.499 2.499 0 0 1 0 1.504l6.718 3.12a2.5 2.5 0 1 1-.488.876l-6.718-3.12a2.5 2.5 0 1 1 0-3.256l6.718-3.12A2.5 2.5 0 0 1 11 2.5z" />
                             </svg>
                         </button>
                     </div>
@@ -190,7 +192,7 @@
 
             {{-- Attachments --}}
             @php
-                $canPreview  = auth()->check() && auth()->user()->can('ebook-files.view');
+                $canPreview = auth()->check() && auth()->user()->can('ebook-files.view');
                 $canDownload = auth()->check() && auth()->user()->can('ebook-files.download');
             @endphp
 
@@ -204,11 +206,11 @@
                     <div class="list-group">
                         @foreach ($book->files as $file)
                             @php
-                                $ext   = strtoupper($file->file_type ?? 'FILE');
-                                $size  = $file->file_size
+                                $ext = strtoupper($file->file_type ?? 'FILE');
+                                $size = $file->file_size
                                     ? number_format($file->file_size / 1048576, 2) . ' MB'
                                     : null;
-                                $name  = basename($file->file_path);
+                                $name = basename($file->file_path);
                                 $isPdf = strtolower($file->file_type) === 'pdf';
                             @endphp
 
@@ -233,21 +235,19 @@
                                 <div class="d-flex gap-2 flex-shrink-0">
                                     @if (!auth()->check())
                                         <a href="{{ route('login') }}"
-                                           class="btn btn-sm btn-outline-secondary d-inline-flex align-items-center gap-1">
+                                            class="btn btn-sm btn-outline-secondary d-inline-flex align-items-center gap-1">
                                             🔒 Login to access
                                         </a>
                                     @else
                                         @if ($isPdf && $canPreview)
-                                            <button type="button"
-                                                    class="btn btn-sm btn-primary d-inline-flex align-items-center gap-1"
-                                                    data-pdf-open
-                                                    data-pdf-url="{{ route('ebooks.embed', $file) }}"
-                                                    data-pdf-title="{{ $name }}"
-                                                    aria-label="Preview {{ $name }}">
-                                                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14"
-                                                     fill="currentColor" viewBox="0 0 16 16" aria-hidden="true">
-                                                    <path d="M10.5 8a2.5 2.5 0 1 1-5 0 2.5 2.5 0 0 1 5 0"/>
-                                                    <path d="M0 8s3-5.5 8-5.5S16 8 16 8s-3 5.5-8 5.5S0 8 0 8m8 3.5a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7"/>
+                                            <button type="button" class="btn btn-sm btn-primary d-inline-flex align-items-center gap-1"
+                                                data-pdf-open data-pdf-url="{{ route('ebooks.stream', $file) }}"
+                                                data-pdf-title="{{ $name }}" aria-label="Preview {{ $name }}">
+                                                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="currentColor"
+                                                    viewBox="0 0 16 16" aria-hidden="true">
+                                                    <path d="M10.5 8a2.5 2.5 0 1 1-5 0 2.5 2.5 0 0 1 5 0" />
+                                                    <path
+                                                        d="M0 8s3-5.5 8-5.5S16 8 16 8s-3 5.5-8 5.5S0 8 0 8m8 3.5a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7" />
                                                 </svg>
                                                 Preview
                                             </button>
@@ -255,12 +255,14 @@
 
                                         @if ($canDownload)
                                             <a href="{{ route('ebooks.download', $file) }}"
-                                               class="btn btn-sm btn-outline-secondary d-inline-flex align-items-center gap-1"
-                                               aria-label="Download {{ $name }}">
-                                                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14"
-                                                     fill="currentColor" viewBox="0 0 16 16" aria-hidden="true">
-                                                    <path d="M.5 9.9a.5.5 0 0 1 .5.5v2.1a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-2.1a.5.5 0 0 1 1 0v2.1a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2v-2.1a.5.5 0 0 1 .5-.5"/>
-                                                    <path d="M7.646 11.854a.5.5 0 0 0 .708 0l3-3a.5.5 0 0 0-.708-.708L8.5 10.293V1.5a.5.5 0 0 0-1 0v8.793L5.354 8.146a.5.5 0 1 0-.708.708z"/>
+                                                class="btn btn-sm btn-outline-secondary d-inline-flex align-items-center gap-1"
+                                                aria-label="Download {{ $name }}">
+                                                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="currentColor"
+                                                    viewBox="0 0 16 16" aria-hidden="true">
+                                                    <path
+                                                        d="M.5 9.9a.5.5 0 0 1 .5.5v2.1a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-2.1a.5.5 0 0 1 1 0v2.1a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2v-2.1a.5.5 0 0 1 .5-.5" />
+                                                    <path
+                                                        d="M7.646 11.854a.5.5 0 0 0 .708 0l3-3a.5.5 0 0 0-.708-.708L8.5 10.293V1.5a.5.5 0 0 0-1 0v8.793L5.354 8.146a.5.5 0 1 0-.708.708z" />
                                                 </svg>
                                                 Download
                                             </a>
@@ -294,10 +296,10 @@
                                     <div class="d-flex align-items-center gap-2 mb-2">
                                         @if ($review->user?->avatar)
                                             <img src="{{ $review->user->avatar }}" alt="{{ $review->user->name }}"
-                                                 class="rounded-circle" width="32" height="32">
+                                                class="rounded-circle" width="32" height="32">
                                         @else
                                             <div class="rounded-circle bg-secondary-subtle d-flex align-items-center justify-content-center"
-                                                 style="width:32px;height:32px;">
+                                                style="width:32px;height:32px;">
                                                 <span class="small fw-bold text-secondary">
                                                     {{ Str::substr($review->user?->name ?? '?', 0, 1) }}
                                                 </span>
@@ -324,13 +326,31 @@
                     <h2 class="h5 fw-semibold mb-3">You might also like</h2>
 
                     <style>
-                        .related-books-grid > [class*="col-"] { display: flex; }
-                        .related-books-grid .catalog-book-card { width: 100%; }
-                        .related-books-grid .catalog-cover { height: 220px; object-fit: cover; }
-                        .related-books-grid .catalog-book-card .card-body { min-height: 220px; }
+                        .related-books-grid>[class*="col-"] {
+                            display: flex;
+                        }
+
+                        .related-books-grid .catalog-book-card {
+                            width: 100%;
+                        }
+
+                        .related-books-grid .catalog-cover {
+                            height: 220px;
+                            object-fit: cover;
+                        }
+
+                        .related-books-grid .catalog-book-card .card-body {
+                            min-height: 220px;
+                        }
+
                         @media (max-width: 575.98px) {
-                            .related-books-grid .catalog-cover { height: 190px; }
-                            .related-books-grid .catalog-book-card .card-body { min-height: 200px; }
+                            .related-books-grid .catalog-cover {
+                                height: 190px;
+                            }
+
+                            .related-books-grid .catalog-book-card .card-body {
+                                min-height: 200px;
+                            }
                         }
                     </style>
 
@@ -348,68 +368,149 @@
     </div>
 
     {{-- =========================================================
-         PDF preview overlay (no Bootstrap dependency)
+    PDF preview overlay (no Bootstrap dependency)
     ========================================================== --}}
-    <div id="pdfModal"
-         style="display:none; position:fixed; inset:0; z-index:1055; background:rgba(0,0,0,.85);"
-         aria-hidden="true" role="dialog" aria-modal="true">
+    {{-- Bootstrap PDF modal --}}
+    {{-- PDF modal --}}
+    <div id="pdfModal" style="display:none; position:fixed; inset:0; z-index:1055; background:rgba(0,0,0,.85);">
         <div style="position:absolute; inset:0; display:flex; flex-direction:column;">
-            <div style="background:#1f2937; color:#fff; padding:10px 16px; display:flex; align-items:center; gap:12px;">
+
+            {{-- Toolbar --}}
+            <div style="background:#111827; color:#fff; padding:10px 16px; display:flex; align-items:center; gap:8px;">
                 <strong id="pdfModalTitle" style="flex:1; font-size:14px;">Preview</strong>
+                <button type="button" id="pdfPrev"
+                    style="background:#374151; color:#fff; border:0; padding:6px 12px; border-radius:4px; cursor:pointer;">‹</button>
+                <span style="font-size:13px; padding:0 8px;">Page <span id="pdfNum">1</span> / <span
+                        id="pdfCount">?</span></span>
+                <button type="button" id="pdfNext"
+                    style="background:#374151; color:#fff; border:0; padding:6px 12px; border-radius:4px; cursor:pointer;">›</button>
+                <button type="button" id="pdfZoomOut"
+                    style="background:#374151; color:#fff; border:0; padding:6px 12px; border-radius:4px; cursor:pointer;">−</button>
+                <button type="button" id="pdfZoomIn"
+                    style="background:#374151; color:#fff; border:0; padding:6px 12px; border-radius:4px; cursor:pointer;">+</button>
+                <button type="button" id="pdfFit"
+                    style="background:#374151; color:#fff; border:0; padding:6px 12px; border-radius:4px; cursor:pointer;">Fit</button>
                 <button type="button" id="pdfModalClose"
-                        style="background:transparent; color:#fff; border:0; font-size:22px; line-height:1; cursor:pointer;"
-                        aria-label="Close">&times;</button>
+                    style="background:#dc2626; color:#fff; border:0; padding:6px 12px; border-radius:4px; cursor:pointer; margin-left:8px;">Close</button>
             </div>
-            <div style="flex:1; background:#525659;">
-                <iframe id="pdfModalFrame" src="about:blank"
-                        style="width:100%;height:100%;border:0;display:block"
-                        title="PDF preview"></iframe>
+
+            {{-- Canvas --}}
+            <div id="pdfWrap"
+                style="flex:1; overflow:auto; text-align:center; padding:16px 0; background:#525659; position:relative;">
+                <div id="pdfLoading" style="color:#eee; padding:40px;">Loading…</div>
             </div>
         </div>
     </div>
+    @push('scripts')
+            <script>
+                (function () {
+                    const modal = document.getElementById('pdfModal');
+                    const wrap = document.getElementById('pdfWrap');
+                    const loading = document.getElementById('pdfLoading');
+                    const titleEl = document.getElementById('pdfModalTitle');
+                    const pageNumEl = document.getElementById('pdfNum');
+                    const pageCntEl = document.getElementById('pdfCount');
+                    const prevBtn = document.getElementById('pdfPrev');
+                    const nextBtn = document.getElementById('pdfNext');
+                    const zoomIn = document.getElementById('pdfZoomIn');
+                    const zoomOut = document.getElementById('pdfZoomOut');
+                    const fitBtn = document.getElementById('pdfFit');
+                    const closeEl = document.getElementById('pdfModalClose');
 
-    <script>
-    (function () {
-        const modalEl = document.getElementById('pdfModal');
-        const frame   = document.getElementById('pdfModalFrame');
-        const titleEl = document.getElementById('pdfModalTitle');
-        const closeEl = document.getElementById('pdfModalClose');
+                    let pdfDoc = null;
+                    let pageNum = 1;
+                    let scale = 1.4;
+                    let rendering = false;
+                    let pending = null;
 
-        function open(url, title) {
-            titleEl.textContent = title || 'Preview';
-            frame.src = url;
-            modalEl.style.display = 'block';
-            document.body.style.overflow = 'hidden';
-        }
-        function close() {
-            modalEl.style.display = 'none';
-            frame.src = 'about:blank';
-            document.body.style.overflow = '';
-        }
+                    // Delegate open from any [data-pdf-open]
+                    document.addEventListener('click', function (e) {
+                        const btn = e.target.closest('[data-pdf-open]');
+                        if (btn) {
+                            e.preventDefault();
+                            open(btn.dataset.pdfUrl, btn.dataset.pdfTitle);
+                        }
+                        if (e.target === closeEl) close();
+                        if (e.target === modal) close();
+                    });
 
-        document.addEventListener('click', function (e) {
-            const btn = e.target.closest('[data-pdf-open]');
-            if (btn) {
-                e.preventDefault();
-                e.stopPropagation();
-                open(btn.dataset.pdfUrl, btn.dataset.pdfTitle);
-                return;
-            }
-            if (e.target === closeEl) {
-                e.preventDefault();
-                close();
-            }
-        });
+                    function open(url, title) {
+                        titleEl.textContent = title || 'Preview';
+                        wrap.innerHTML = '<div id="pdfLoading" style="color:#eee;padding:40px;text-align:center;">Loading…</div>';
+                        modal.style.display = 'block';
+                        document.body.style.overflow = 'hidden';
 
-        document.addEventListener('keydown', function (e) {
-            if (e.key === 'Escape' && modalEl.style.display === 'block') close();
-        });
-    })();
-    </script>
+                        pdfjsLib.getDocument(url).promise.then(function (pdf) {
+                            pdfDoc = pdf;
+                            pageNum = 1;
+                            pageCntEl.textContent = pdf.numPages;
+                            render(pageNum);
+                        }).catch(function (err) {
+                            wrap.innerHTML = '<div style="color:#fca5a5;padding:40px;text-align:center;">Failed to load PDF: ' + err.message + '</div>';
+                        });
+                    }
 
-    {{-- Structured data (JSON-LD) --}}
-    <script type="application/ld+json">
-        {!! json_encode([
+                    function close() {
+                        modal.style.display = 'none';
+                        wrap.innerHTML = '<div id="pdfLoading" style="color:#eee;padding:40px;text-align:center;">Loading…</div>';
+                        document.body.style.overflow = '';
+                        pdfDoc = null;
+                    }
+
+                    function render(num) {
+                        rendering = true;
+                        pdfDoc.getPage(num).then(function (page) {
+                            const viewport = page.getViewport({ scale: scale });
+                            const canvas = document.createElement('canvas');
+                            const ctx = canvas.getContext('2d');
+                            canvas.width = viewport.width;
+                            canvas.height = viewport.height;
+                            canvas.style.boxShadow = '0 2px 6px rgba(0,0,0,.5)';
+                            canvas.style.background = '#fff';
+
+                            wrap.innerHTML = '';
+                            wrap.appendChild(canvas);
+
+                            page.render({ canvasContext: ctx, viewport: viewport }).promise.then(function () {
+                                rendering = false;
+                                if (pending !== null) { const p = pending; pending = null; render(p); }
+                            });
+                        });
+                        pageNumEl.textContent = num;
+                        prevBtn.disabled = num <= 1;
+                        nextBtn.disabled = num >= pdfDoc.numPages;
+                    }
+
+                    function queueRender(num) {
+                        if (rendering) { pending = num; return; }
+                        render(num);
+                    }
+
+                    prevBtn.addEventListener('click', function () { if (pageNum > 1) queueRender(--pageNum); });
+                    nextBtn.addEventListener('click', function () { if (pageNum < pdfDoc.numPages) queueRender(++pageNum); });
+                    zoomIn.addEventListener('click', function () { scale *= 1.2; queueRender(pageNum); });
+                    zoomOut.addEventListener('click', function () { scale = Math.max(0.3, scale / 1.2); queueRender(pageNum); });
+                    fitBtn.addEventListener('click', function () {
+                        pdfDoc.getPage(pageNum).then(function (page) {
+                            const base = page.getViewport({ scale: 1 });
+                            scale = (wrap.clientWidth - 32) / base.width;
+                            queueRender(pageNum);
+                        });
+                    });
+
+                    document.addEventListener('keydown', function (e) {
+                        if (modal.style.display !== 'block') return;
+                        if (e.key === 'Escape') close();
+                        if (e.key === 'ArrowRight' || e.key === 'PageDown') nextBtn.click();
+                        if (e.key === 'ArrowLeft' || e.key === 'PageUp') prevBtn.click();
+                        if (e.key === '+' || e.key === '=') zoomIn.click();
+                        if (e.key === '-') zoomOut.click();
+                    });
+                })();
+            </script>
+            {{-- Structured data (JSON-LD) --}}
+            <script type="application/ld+json">
+                {!! json_encode([
             '@context' => 'https://schema.org',
             '@type' => 'Book',
             'name' => $book->title,
@@ -419,7 +520,7 @@
             'datePublished' => $book->published_year,
             'description' => $book->description ? Str::limit(strip_tags($book->description), 160) : null,
             'image' => $book->cover_url,
-            'author' => $book->authors->map(fn ($a) => ['@type' => 'Person', 'name' => $a->name])->values()->all(),
+            'author' => $book->authors->map(fn($a) => ['@type' => 'Person', 'name' => $a->name])->values()->all(),
             'publisher' => $book->publisher
                 ? ['@type' => 'Organization', 'name' => $book->publisher->name]
                 : null,
@@ -434,6 +535,6 @@
                 ]
                 : null,
         ], JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE) !!}
-    </script>
-
+            </script>
+    @endpush
 </x-app-layout>
