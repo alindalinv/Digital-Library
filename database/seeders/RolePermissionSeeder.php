@@ -52,6 +52,7 @@ class RolePermissionSeeder extends Seeder
             'ebook-files.create',
             'ebook-files.update',
             'ebook-files.delete',
+            'ebook-files.download',
 
             // Borrowings
             'borrowings.view',

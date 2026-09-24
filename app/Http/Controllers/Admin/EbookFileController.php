@@ -16,7 +16,7 @@ class EbookFileController extends Controller
 {
     public function __construct()
     {
-        $this->middleware('permission:ebook-files.view')->only(['index', 'show']);
+        $this->middleware('permission:ebook-files.view')->only(['index', 'show', 'download', 'view', 'stream', 'embed']);
         $this->middleware('permission:ebook-files.create')->only(['create', 'store']);
         $this->middleware('permission:ebook-files.update')->only(['edit', 'update']);
         $this->middleware('permission:ebook-files.delete')->only('destroy');
@@ -26,7 +26,7 @@ class EbookFileController extends Controller
     {
         $search = $request->string('search')->trim()->toString();
         $ebookFiles = EbookFile::with('book:id,title,isbn')
-            ->when($search, fn ($query) => $query->whereHas('book', fn ($book) => $book
+            ->when($search, fn($query) => $query->whereHas('book', fn($book) => $book
                 ->where('title', 'like', "%{$search}%")
                 ->orWhere('isbn', 'like', "%{$search}%")))
             ->latest()->paginate(15)->withQueryString();
@@ -59,7 +59,7 @@ class EbookFileController extends Controller
 
         DB::transaction(function () use ($validated, $upload) {
             $isPrimary = $validated['is_primary'] ?? false;
-            if (! EbookFile::where('book_id', $validated['book_id'])->exists()) {
+            if (!EbookFile::where('book_id', $validated['book_id'])->exists()) {
                 $isPrimary = true;
             }
             if ($isPrimary) {
@@ -68,7 +68,7 @@ class EbookFileController extends Controller
 
             EbookFile::create([
                 'book_id' => $validated['book_id'],
-                'file_path' => $upload->store('ebooks', 'public'),
+                'file_path' => $upload->store('ebooks', 'local'),   // ✅ local
                 'file_type' => strtolower($upload->getClientOriginalExtension()),
                 'file_size' => $upload->getSize(),
                 'is_primary' => $isPrimary,
@@ -103,8 +103,10 @@ class EbookFileController extends Controller
 
         DB::transaction(function () use ($request, $validated, $ebookFile, &$newPath) {
             $isPrimary = $validated['is_primary'] ?? false;
-            if (! $isPrimary && ! EbookFile::where('book_id', $validated['book_id'])
-                ->whereKeyNot($ebookFile->id)->exists()) {
+            if (
+                !$isPrimary && !EbookFile::where('book_id', $validated['book_id'])
+                    ->whereKeyNot($ebookFile->id)->exists()
+            ) {
                 $isPrimary = true;
             }
 
@@ -116,7 +118,7 @@ class EbookFileController extends Controller
             $data = ['book_id' => $validated['book_id'], 'is_primary' => $isPrimary];
             if ($request->hasFile('file')) {
                 $upload = $validated['file'];
-                $newPath = $upload->store('ebooks', 'public');
+                $newPath = $upload->store('ebooks', 'local');   // ✅ local (was 'public')
                 $data += [
                     'file_path' => $newPath,
                     'file_type' => strtolower($upload->getClientOriginalExtension()),
@@ -127,7 +129,7 @@ class EbookFileController extends Controller
         });
 
         if ($newPath) {
-            Storage::disk('public')->delete($oldPath);
+            Storage::disk('local')->delete($oldPath);
         }
 
         return redirect()->route('admin.ebook-files.index')->with('success', 'E-book file updated successfully.');
@@ -137,9 +139,21 @@ class EbookFileController extends Controller
     {
         $path = $ebookFile->file_path;
         $ebookFile->delete();
-        Storage::disk('public')->delete($path);
+        Storage::disk('local')->delete($path);
 
         return redirect()->route('admin.ebook-files.index')->with('success', 'E-book file deleted successfully.');
+    }
+
+    public function download(EbookFile $ebookFile)
+    {
+        $disk = Storage::disk('local');
+
+        abort_unless($disk->exists($ebookFile->file_path), 404);
+
+        return $disk->download(
+            $ebookFile->file_path,
+            basename($ebookFile->file_path)
+        );
     }
 
     private function rules(bool $requiresFile = true): array
@@ -149,5 +163,46 @@ class EbookFileController extends Controller
             'file' => [$requiresFile ? 'required' : 'nullable', 'file', 'mimes:pdf,epub,mobi', 'max:51200'],
             'is_primary' => ['nullable', 'boolean'],
         ];
+    }
+    public function view(Request $request, EbookFile $ebookFile): View
+    {
+        $disk = Storage::disk('local');
+        abort_unless($disk->exists($ebookFile->file_path), 404);
+
+        $isAdmin = str_starts_with((string) request()->route()->getName(), 'admin.');
+
+        // If opened inside an iframe modal → return bare viewer (no layout)
+        if ($request->boolean('modal')) {
+            return view('partials.pdfjs-modal', [
+                'ebookFile' => $ebookFile,
+                'isAdmin' => $isAdmin,
+            ]);
+        }
+
+        return view(
+            $isAdmin ? 'admin.ebooks.show' : 'frontend.ebooks.show',
+            [
+                'ebookFile' => $ebookFile,
+                'isAdmin' => $isAdmin,
+            ]
+        );
+    }
+    public function embed(EbookFile $ebookFile): View
+    {
+        $disk = Storage::disk('local');
+        abort_unless($disk->exists($ebookFile->file_path), 404);
+
+        return view('partials.pdfjs-embed', compact('ebookFile'));
+    }
+
+    public function stream(EbookFile $ebookFile)
+    {
+        $disk = Storage::disk('local');
+        abort_unless($disk->exists($ebookFile->file_path), 404);
+
+        return response()->file($disk->path($ebookFile->file_path), [
+            'Content-Type' => 'application/pdf',
+            'Content-Disposition' => 'inline; filename="' . basename($ebookFile->file_path) . '"',
+        ]);
     }
 }

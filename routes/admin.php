@@ -65,7 +65,7 @@ Route::post('/logout', [AuthenticatedSessionController::class, 'destroy'])
 |
 */
 
-Route::middleware('admin')
+Route::middleware(['auth', 'admin'])
     ->name('admin.')
     ->group(function () {
 
@@ -155,8 +155,20 @@ Route::middleware('admin')
         |--------------------------------------------------------------------------
         */
 
-        Route::resource('ebook-files', EbookFileController::class);
+        Route::resource('ebook-files', EbookFileController::class)
+            ->parameters(['ebook-files' => 'ebookFile']);
 
+        Route::get('ebook-files/{ebookFile}/view', [EbookFileController::class, 'view'])
+            ->name('ebook-files.view');
+
+        Route::get('ebook-files/{ebookFile}/stream', [EbookFileController::class, 'stream'])
+            ->name('ebook-files.stream');
+
+        Route::get('ebook-files/{ebookFile}/download', [EbookFileController::class, 'download'])
+            ->name('ebook-files.download');
+        Route::get('ebook-files/{ebookFile}/embed', [EbookFileController::class, 'embed'])
+    ->name('ebook-files.embed');
+    
 
         /*
         |--------------------------------------------------------------------------

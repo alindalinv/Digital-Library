@@ -116,7 +116,7 @@
 
 
                     {{-- Slug --}}
-                    <div>
+                    {{-- <div>
                         <div class="flex items-center justify-between">
                             <label for="slug" class="{{ $labelClass }}">Slug</label>
 
@@ -141,7 +141,7 @@
                         @error('slug')
                             <p id="slug-error" class="{{ $errorClass }}">{{ $message }}</p>
                         @enderror
-                    </div>
+                    </div> --}}
 
 
                     {{-- ISBN --}}
@@ -591,39 +591,7 @@
                 isDirty = false;
             });
 
-            /* -----------------------------------------------------
-             * 3. Slug auto-generation from title
-             * --------------------------------------------------- */
-            const slugify = (str) =>
-                str.toLowerCase().trim()
-                    .replace(/[^\w\s-]/g, '')
-                    .replace(/[\s_]+/g, '-')
-                    .replace(/-+/g, '-')
-                    .replace(/^-+|-+$/g, '');
-
-            let slugManuallyEdited = false;
-
-            slugInput?.addEventListener('input', () => {
-                slugManuallyEdited = true;
-                delete slugInput.dataset.autofilled;
-            });
-
-            titleInput?.addEventListener('input', () => {
-                if (slugManuallyEdited || !slugInput) return;
-                slugInput.value = slugify(titleInput.value);
-                slugInput.dataset.autofilled = 'true';
-            });
-
-            /* -----------------------------------------------------
-             * 3b. "Reset to auto" — force slug from current title
-             * --------------------------------------------------- */
-            resetSlugBtn?.addEventListener('click', () => {
-                if (!slugInput || !titleInput) return;
-                slugManuallyEdited = false;
-                slugInput.value = slugify(titleInput.value);
-                slugInput.dataset.autofilled = 'true';
-                isDirty = true;
-            });
+           
 
             /* -----------------------------------------------------
              * 4. Cover image preview with memory cleanup

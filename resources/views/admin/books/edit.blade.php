@@ -97,7 +97,7 @@
                     </div>
 
                     {{-- Slug --}}
-                    <div>
+                    {{-- <div>
                         <div class="flex items-center justify-between">
                             <label for="slug" class="{{ $labelClass }}">Slug</label>
                             <button type="button"
@@ -118,7 +118,7 @@
                         @error('slug')
                             <p id="slug-error" class="{{ $errorClass }}">{{ $message }}</p>
                         @enderror
-                    </div>
+                    </div> --}}
 
                     {{-- ISBN --}}
                     <div>

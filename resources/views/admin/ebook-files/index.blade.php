@@ -20,7 +20,6 @@
         <div id="ebookFileResults">@include('admin.ebook-files._results')</div>
     </div>
 @endsection
-
 @push('scripts')
     <script>
         document.addEventListener('DOMContentLoaded', () => {
