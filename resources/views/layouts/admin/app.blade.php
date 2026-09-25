@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html lang="{{ str_replace('_', '-', app()->getLocale()) }}" dir="{{ app()->getLocale() === 'ar' ? 'rtl' : 'ltr' }}"
-    class="h-full overflow-x-hidden bg-gray-50 dark:bg-gray-900">
+    class="h-full bg-gray-50 dark:bg-gray-900">
 
 <head>
     <meta charset="utf-8">
@@ -8,178 +8,232 @@
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
     <title>{{ $title ?? 'Dashboard' }} | {{ config('app.name') }}</title>
+    <!-- Theme Store -->
+    <style>
+        [x-cloak] {
+            display: none !important;
+        }
 
+        html {
+            overflow-x: hidden;
+        }
+
+        body {
+            min-height: 100%;
+            overflow-x: hidden;
+        }
+    </style>
+    {{-- Alpine Stores --}}
+    <script>
+        document.addEventListener('alpine:init', () => {
+
+            /*
+            * ==========================================================
+            * Theme Store
+            * ==========================================================
+            */
+            Alpine.store('theme', {
+
+                theme: 'light',
+                resolvedTheme: 'light',
+
+                init() {
+                    const savedTheme = localStorage.getItem('theme');
+
+                    this.theme = savedTheme === 'dark'
+                        ? 'dark'
+                        : 'light';
+
+                    this.updateTheme();
+                },
+
+                set(value) {
+                    this.theme = value === 'dark'
+                        ? 'dark'
+                        : 'light';
+
+                    localStorage.setItem('theme', this.theme);
+
+                    this.updateTheme();
+
+                    window.dispatchEvent(
+                        new CustomEvent('theme-changed', {
+                            detail: this.theme
+                        })
+                    );
+                },
+
+                toggle() {
+                    this.set(
+                        this.resolvedTheme === 'dark'
+                            ? 'light'
+                            : 'dark'
+                    );
+                },
+
+                updateTheme() {
+                    const html = document.documentElement;
+                    const isDark = this.theme === 'dark';
+
+                    html.classList.toggle('dark', isDark);
+
+                    this.resolvedTheme = isDark
+                        ? 'dark'
+                        : 'light';
+
+                    html.setAttribute(
+                        'data-color-scheme',
+                        this.resolvedTheme
+                    );
+
+                    html.dataset.theme = this.resolvedTheme;
+                    html.style.colorScheme = this.resolvedTheme;
+
+                    if (document.body) {
+                        document.body.dataset.theme = this.resolvedTheme;
+                        document.body.style.colorScheme =
+                            this.resolvedTheme;
+                    }
+                }
+            });
+
+
+            /*
+            * ==========================================================
+            * Sidebar Store
+            * ==========================================================
+            */
+            Alpine.store('sidebar', {
+
+                breakpoint: 1280,
+
+                isExpanded: false,
+                isMobileOpen: false,
+                isHovered: false,
+
+                init() {
+                    this.syncWithViewport();
+
+                    window.addEventListener(
+                        'resize',
+                        this.handleResize.bind(this),
+                        { passive: true }
+                    );
+                },
+
+                isDesktop() {
+                    return window.innerWidth >= this.breakpoint;
+                },
+
+                syncWithViewport() {
+
+                    if (this.isDesktop()) {
+
+                        const savedState =
+                            localStorage.getItem(
+                                'sidebarExpanded'
+                            );
+
+                        this.isExpanded =
+                            savedState === null
+                                ? true
+                                : savedState === 'true';
+
+                        this.isMobileOpen = false;
+
+                    } else {
+
+                        this.isExpanded = false;
+                        this.isMobileOpen = false;
+                        this.isHovered = false;
+                    }
+                },
+
+                handleResize() {
+                    this.syncWithViewport();
+                },
+
+                toggleExpanded() {
+
+                    if (!this.isDesktop()) {
+                        return;
+                    }
+
+                    this.isExpanded = !this.isExpanded;
+                    this.isHovered = false;
+
+                    localStorage.setItem(
+                        'sidebarExpanded',
+                        this.isExpanded
+                    );
+                },
+
+                toggleMobileOpen() {
+
+                    if (this.isDesktop()) {
+                        return;
+                    }
+
+                    this.isMobileOpen =
+                        !this.isMobileOpen;
+                },
+
+                setMobileOpen(value) {
+                    this.isMobileOpen =
+                        Boolean(value);
+                },
+
+                setHovered(value) {
+
+                    if (
+                        this.isDesktop() &&
+                        !this.isExpanded
+                    ) {
+                        this.isHovered =
+                            Boolean(value);
+                    }
+                }
+            });
+        });
+    </script>
     <!-- Scripts -->
     @vite([
         'resources/assets/admin/css/app.css',
         'resources/assets/admin/js/app.js'
     ])
 
-    <!-- Theme Store -->
-    <style>
-        [x-cloak] {
-            display: none !important;
-        }
-    </style>
-    <!-- Theme Store -->
-    <script>
-        document.addEventListener('alpine:init', () => {
-            Alpine.store('theme', {
-                init() {
-                    const savedTheme = localStorage.getItem('theme');
-                    this.theme = savedTheme === 'dark' ? 'dark' : 'light';
-                    this.updateTheme();
-                },
-                theme: 'light',
-                resolvedTheme: 'light',
-                set(value) {
-                    value = value === 'dark' ? 'dark' : 'light';
-                    this.theme = value;
-                    localStorage.setItem('theme', value);
-                    this.updateTheme();
-                    window.dispatchEvent(new CustomEvent('theme-changed', { detail: value }));
-                },
-                toggle() {
-                    this.set(this.resolvedTheme === 'dark' ? 'light' : 'dark');
-                },
-                updateTheme() {
-                    const html = document.documentElement;
-                    const isDark = this.theme === 'dark';
-                    if (isDark) {
-                        html.classList.add('dark');
-                    } else {
-                        html.classList.remove('dark');
-                    }
-
-                    this.resolvedTheme = isDark ? 'dark' : 'light';
-                    html.setAttribute('data-color-scheme', this.resolvedTheme);
-                    html.dataset['theme'] = this.resolvedTheme;
-                    html.style.colorScheme = this.resolvedTheme;
-                    if (document.body) {
-                        document.body.dataset['theme'] = this.resolvedTheme;
-                        document.body.style.colorScheme = this.resolvedTheme;
-                    }
-                }
-            });
-
-            Alpine.store('sidebar', {
-                isExpanded: false,
-                isMobileOpen: false,
-                isHovered: false,
-
-                init() {
-                    const savedState = localStorage.getItem('sidebarExpanded');
-                    if (window.innerWidth >= 1280) {
-                        this.isExpanded = savedState === null ? true : savedState === 'true';
-                    } else {
-                        this.isExpanded = false;
-                    }
-                    this.isMobileOpen = false;
-
-                    window.addEventListener('resize', () => {
-                        this.handleResize();
-                    });
-                },
-
-                handleResize() {
-                    if (window.innerWidth < 1280) {
-                        if (this.isMobileOpen) {
-                            this.isMobileOpen = false;
-                        }
-                    } else {
-                        this.isMobileOpen = false;
-                        const savedState = localStorage.getItem('sidebarExpanded');
-                        this.isExpanded = savedState === null ? true : savedState === 'true';
-                    }
-                },
-
-                toggleExpanded() {
-                    this.isExpanded = !this.isExpanded;
-                    this.isMobileOpen = false;
-
-                    if (window.innerWidth >= 1280) {
-                        localStorage.setItem('sidebarExpanded', this.isExpanded);
-                    }
-                },
-
-                toggleMobileOpen() {
-                    this.isMobileOpen = !this.isMobileOpen;
-                },
-
-                setMobileOpen(val) {
-                    this.isMobileOpen = val;
-                },
-
-                setHovered(val) {
-                    if (window.innerWidth >= 1280 && !this.isExpanded) {
-                        this.isHovered = val;
-                    }
-                }
-            });
-        });
-    </script>
-    <!-- Apply RTL and dark mode immediately to prevent flash -->
-    <script>
-        (function () {
-            const savedDir = localStorage.getItem('dir');
-            const savedLocale = localStorage.getItem('locale');
-            if (savedDir) {
-                document.documentElement.setAttribute('dir', savedDir);
-            } else if (savedLocale === 'ar') {
-                document.documentElement.setAttribute('dir', 'rtl');
-            }
-            if (savedLocale) {
-                document.documentElement.setAttribute('lang', savedLocale);
-            }
-
-            const savedTheme = localStorage.getItem('theme');
-            const isDark = savedTheme === 'dark';
-            if (isDark) {
-                document.documentElement.classList.add('dark');
-                document.documentElement.setAttribute('data-color-scheme', 'dark');
-            } else {
-                document.documentElement.classList.remove('dark');
-                document.documentElement.setAttribute('data-color-scheme', 'light');
-            }
-        })();
-    </script>
     <!-- TinyMCE -->
     <script src="https://cdn.jsdelivr.net/npm/tinymce@7/tinymce.min.js" referrerpolicy="origin"></script>
     <link href="https://cdn.jsdelivr.net/npm/tom-select@2.3.1/dist/css/tom-select.css" rel="stylesheet">
 </head>
 
-<body x-data="{ 'loaded': true}" x-init="$store.sidebar.isExpanded = window.innerWidth >= 1280;
-    const checkMobile = () => {
-        if (window.innerWidth < 1280) {
-            $store.sidebar.setMobileOpen(false);
-            $store.sidebar.isExpanded = false;
-        } else {
-            $store.sidebar.isMobileOpen = false;
-            $store.sidebar.isExpanded = true;
-        }
-    };
-    window.addEventListener('resize', checkMobile);">
+<body x-data="{ loaded: true }"
+    class="min-h-full bg-gray-50 text-gray-800 antialiased dark:bg-gray-900 dark:text-gray-200">
 
     {{-- preloader --}}
     <x-admin.common.preloader />
     {{-- preloader end --}}
 
-    <div class="min-h-screen xl:flex">
+    <div class="min-h-screen">
         @include('layouts.admin.backdrop')
         @include('layouts.admin.sidebar')
 
-        <div class="flex-1 transition-all duration-300 ease-in-out" :class="{
-                'xl:ml-[290px]': $store.sidebar.isExpanded || $store.sidebar.isHovered,
-                'xl:ml-[90px]': !$store.sidebar.isExpanded && !$store.sidebar.isHovered,
-                'ml-0': $store.sidebar.isMobileOpen
+        <div class="min-h-screen transition-[margin] duration-300 ease-in-out" 
+            :class="{
+                'xl:ml-[290px]':
+                    $store.sidebar.isExpanded ||
+                    $store.sidebar.isHovered,
+                'xl:ml-[90px]':
+                    !$store.sidebar.isExpanded &&
+                    !$store.sidebar.isHovered,
+                'ml-0':
+                    !$store.sidebar.isMobileOpen
             }">
             <!-- app header start -->
             @include('layouts.admin.app-header')
             <!-- app header end -->
-            <main class="flex-1 min-h-screen bg-gray-50 text-gray-800
-             dark:bg-gray-900 dark:text-gray-200
-             transition-colors duration-200">
-                <div class="p-4 mx-auto max-w-(--breakpoint-2xl) md:p-6">
+            <main class="min-h-[calc(100vh-64px)] bg-gray-50 text-gray-800 transition-colors duration-200 dark:bg-gray-900 dark:text-gray-200">
+                <div class="mx-auto w-full max-w-(--breakpoint-2xl) px-4 py-4 sm:px-5 sm:py-5 lg:px-6 lg:py-6">
                     <x-admin.common.page-breadcrumb :pageTitle="$title ?? 'Page'" />
                     {{-- Flash messages (visible on every page) --}}
                     @include('admin.partials.flash')
@@ -192,4 +246,5 @@
     <script src="https://cdn.jsdelivr.net/npm/tom-select@2.3.1/dist/js/tom-select.complete.min.js"></script>
     @stack('scripts')
 </body>
+
 </html>
