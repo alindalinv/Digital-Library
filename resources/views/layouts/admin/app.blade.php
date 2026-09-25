@@ -237,7 +237,11 @@
                     <x-admin.common.page-breadcrumb :pageTitle="$title ?? 'Page'" />
                     {{-- Flash messages (visible on every page) --}}
                     @include('admin.partials.flash')
-                    @yield('content')
+                    <div class="overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-sm dark:border-gray-800 dark:bg-gray-900">
+                        <div class="border-b border-gray-200 px-5 py-5 lg:px-6 dark:border-gray-800">
+                            @yield('content')
+                        </div>
+                    </div>
                 </div>
             </main>
         </div>

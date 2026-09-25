@@ -2,8 +2,6 @@
 
 @section('content')
 
-    <div class="rounded-2xl border border-gray-200 bg-white p-5 lg:p-6 dark:border-gray-800 dark:bg-gray-900">
-
         {{-- =========================================================
         Header
         ========================================================== --}}
@@ -88,7 +86,7 @@
             @include('admin.books._trashed_results', ['books' => $books, 'search' => $search ?? ''])
         </div>
 
-    </div>
+
     @push('scripts')
         <script>
             document.addEventListener('DOMContentLoaded', () => {

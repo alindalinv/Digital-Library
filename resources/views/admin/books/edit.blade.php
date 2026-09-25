@@ -12,9 +12,6 @@
 
         $selectedAuthors = old('authors', $book->authors->pluck('id')->map(fn ($id) => (string) $id)->all());
     @endphp
-
-    <div class="rounded-2xl border border-gray-200 bg-white p-5 lg:p-6 dark:border-gray-800 dark:bg-gray-900">
-
         {{-- Header --}}
         <div class="mb-6 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
             <div>
@@ -445,8 +442,6 @@
                 </button>
             </div>
         </form>
-    </div>
-
     {{-- =========================================================
          JavaScript
     ========================================================== --}}

@@ -2,8 +2,6 @@
 
 @section('content')
 
-    <div class="rounded-2xl border border-gray-200 bg-white p-5 lg:p-6 dark:border-gray-800 dark:bg-gray-900">
-
         {{-- ============ Header ============ --}}
         <div class="mb-5">
             <h3 class="text-lg font-semibold text-gray-800 dark:text-white/90">
@@ -121,7 +119,7 @@
 
         </form>
 
-    </div>
+
 
     {{-- ============ Live Preview Script ============ --}}
     @push('scripts')

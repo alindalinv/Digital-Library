@@ -9,7 +9,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\View\View;
 use Spatie\Permission\Models\Role;
-
+use Illuminate\Http\RedirectResponse;
 class UserController extends Controller
 {
     public function __construct()
@@ -159,16 +159,26 @@ class UserController extends Controller
             ->with('success', 'User updated successfully.');
     }
 
-    public function destroy(User $user)
-    {
-        if ($user->getKey() === auth()->id()) {
-            return back()->with('error', 'You cannot delete your own account.');
-        }
-
-        $user->delete();
-
-        return back()->with('success', 'User deleted successfully.');
+public function destroy(User $user): RedirectResponse
+{
+    // Prevent the currently authenticated user
+    // from deleting their own account.
+    if ($user->is(auth()->user())) {
+        return back()->with(
+            'error',
+            'You cannot delete your own account.'
+        );
     }
+
+    // Delete the target user.
+    $user->delete();
+
+    return back()->with(
+        'success',
+        'User deleted successfully.'
+    );
+}
+
 
     /* ------------------------------------------------------------------ */
     /* Role assignment                                                     */

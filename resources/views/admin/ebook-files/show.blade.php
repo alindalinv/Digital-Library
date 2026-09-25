@@ -300,95 +300,264 @@
         </div>
     @endcan
 
-    {{-- =========================================================
-    Modal JS
-    ========================================================== --}}
-    <script>
-        (function () {
-            const modal = document.getElementById('pdfPreviewModal');
-            const frame = document.getElementById('pdfPreviewFrame');
-            const titleEl = document.getElementById('pdfPreviewTitle');
-            const closeBtn = document.getElementById('pdfPreviewClose');
-            const loading = document.getElementById('pdfPreviewLoading');
-            const dLoad = document.getElementById('pdfPreviewDownload');
-            const dTab = document.getElementById('pdfPreviewOpenTab');
+{{-- =========================================================
+Modal JS
+========================================================== --}}
+<script>
+    (function () {
+        'use strict';
 
-            let lastFocused = null;
+        /* =====================================================
+         * PDF Preview Modal
+         * ===================================================== */
+        const pdfModal = document.getElementById('pdfPreviewModal');
+        const pdfFrame = document.getElementById('pdfPreviewFrame');
+        const pdfTitle = document.getElementById('pdfPreviewTitle');
+        const pdfCloseBtn = document.getElementById('pdfPreviewClose');
+        const pdfLoading = document.getElementById('pdfPreviewLoading');
+        const pdfDownload = document.getElementById('pdfPreviewDownload');
+        const pdfOpenTab = document.getElementById('pdfPreviewOpenTab');
 
-            function openModal(url, title, downloadUrl) {
-                lastFocused = document.activeElement;
+        let pdfLastFocused = null;
 
-                titleEl.textContent = title || 'Preview';
-                loading.style.display = 'flex';
-                frame.src = url;
+        function openPdfModal(url, title, downloadUrl) {
+            if (!pdfModal || !pdfFrame) return;
 
-                if (downloadUrl) {
-                    dLoad.href = downloadUrl;
-                    dLoad.style.display = '';
-                    dLoad.classList.remove('hidden');
-                } else {
-                    dLoad.style.display = 'none';
-                }
-                dTab.href = url;
+            pdfLastFocused = document.activeElement;
 
-                modal.classList.remove('hidden');
-                modal.classList.add('flex');
-                document.body.style.overflow = 'hidden';
+            pdfTitle.textContent = title || 'Preview';
 
-                setTimeout(() => closeBtn.focus(), 30);
+            pdfLoading.style.display = 'flex';
+
+            pdfFrame.src = url;
+
+            // Download button
+            if (downloadUrl) {
+                pdfDownload.href = downloadUrl;
+                pdfDownload.style.display = '';
+                pdfDownload.classList.remove('hidden');
+            } else {
+                pdfDownload.href = '#';
+                pdfDownload.style.display = 'none';
+                pdfDownload.classList.add('hidden');
             }
 
-            function closeModal() {
-                modal.classList.add('hidden');
-                modal.classList.remove('flex');
-                frame.src = 'about:blank';
-                document.body.style.overflow = '';
-                if (lastFocused?.focus) lastFocused.focus();
+            // Open in new tab
+            pdfOpenTab.href = url;
+
+            pdfModal.classList.remove('hidden');
+            pdfModal.classList.add('flex');
+
+            document.body.style.overflow = 'hidden';
+
+            setTimeout(() => {
+                pdfCloseBtn?.focus();
+            }, 30);
+        }
+
+        function closePdfModal() {
+            if (!pdfModal) return;
+
+            pdfModal.classList.add('hidden');
+            pdfModal.classList.remove('flex');
+
+            if (pdfFrame) {
+                pdfFrame.src = 'about:blank';
             }
 
-            // Hide spinner once the iframe has loaded
-            frame.addEventListener('load', function () {
-                if (frame.src && frame.src !== 'about:blank') {
-                    setTimeout(() => { loading.style.display = 'none'; }, 150);
+            document.body.style.overflow = '';
+
+            if (pdfLastFocused?.focus) {
+                pdfLastFocused.focus();
+            }
+        }
+
+        if (pdfFrame) {
+            pdfFrame.addEventListener('load', function () {
+                if (pdfFrame.src && !pdfFrame.src.endsWith('about:blank')) {
+                    setTimeout(() => {
+                        if (pdfLoading) {
+                            pdfLoading.style.display = 'none';
+                        }
+                    }, 150);
                 }
             });
+        }
 
-            // Open from any [data-pdf-open] trigger
-            document.addEventListener('click', function (e) {
-                const trigger = e.target.closest('[data-pdf-open]');
-                if (trigger) {
-                    e.preventDefault();
-                    openModal(
-                        trigger.dataset.pdfUrl,
-                        trigger.dataset.pdfTitle,
-                        trigger.dataset.pdfDownload || null
-                    );
-                    return;
+
+        /* =====================================================
+         * Replace File Modal
+         * ===================================================== */
+        const replaceModal = document.getElementById('replaceModal');
+
+        let replaceLastFocused = null;
+
+        function openReplaceModal() {
+            if (!replaceModal) {
+                console.error('Replace modal #replaceModal was not found.');
+                return;
+            }
+
+            replaceLastFocused = document.activeElement;
+
+            // Show modal
+            replaceModal.style.display = 'flex';
+            replaceModal.setAttribute('aria-hidden', 'false');
+
+            // Prevent background scrolling
+            document.body.style.overflow = 'hidden';
+
+            // Focus first input/button
+            setTimeout(() => {
+                const fileInput = replaceModal.querySelector('input[type="file"]');
+
+                if (fileInput) {
+                    fileInput.focus();
                 }
+            }, 50);
+        }
 
-                if (e.target === closeBtn || e.target.closest('#pdfPreviewClose')) {
-                    e.preventDefault();
-                    closeModal();
-                    return;
-                }
+        function closeReplaceModal() {
+            if (!replaceModal) return;
 
-                // Backdrop click
-                if (e.target === modal) {
-                    closeModal();
-                }
-            });
+            replaceModal.style.display = 'none';
+            replaceModal.setAttribute('aria-hidden', 'true');
 
-            // Esc closes
-            document.addEventListener('keydown', function (e) {
-                if (e.key === 'Escape' && !modal.classList.contains('hidden')) {
-                    closeModal();
-                }
-            });
+            document.body.style.overflow = '';
 
-            // Close from inside the iframe
-            window.addEventListener('message', function (e) {
-                if (e.data === 'pdf-modal-close') closeModal();
-            });
-        })();
-    </script>
+            // Reset file input
+            const fileInput = replaceModal.querySelector('input[type="file"]');
+
+            if (fileInput) {
+                fileInput.value = '';
+            }
+
+            // Return focus to Replace button
+            if (replaceLastFocused?.focus) {
+                replaceLastFocused.focus();
+            }
+        }
+
+
+        /* =====================================================
+         * Global Click Handler
+         * ===================================================== */
+        document.addEventListener('click', function (e) {
+
+            /* -------------------------------------------------
+             * PDF Preview
+             * ------------------------------------------------- */
+            const pdfTrigger = e.target.closest('[data-pdf-open]');
+
+            if (pdfTrigger) {
+                e.preventDefault();
+
+                openPdfModal(
+                    pdfTrigger.dataset.pdfUrl,
+                    pdfTrigger.dataset.pdfTitle,
+                    pdfTrigger.dataset.pdfDownload || null
+                );
+
+                return;
+            }
+
+
+            /* -------------------------------------------------
+             * PDF Close
+             * ------------------------------------------------- */
+            if (
+                pdfCloseBtn &&
+                (
+                    e.target === pdfCloseBtn ||
+                    e.target.closest('#pdfPreviewClose')
+                )
+            ) {
+                e.preventDefault();
+                closePdfModal();
+                return;
+            }
+
+
+            /* -------------------------------------------------
+             * PDF Backdrop
+             * ------------------------------------------------- */
+            if (pdfModal && e.target === pdfModal) {
+                closePdfModal();
+                return;
+            }
+
+
+            /* -------------------------------------------------
+             * Replace Open
+             * ------------------------------------------------- */
+            const replaceTrigger = e.target.closest('[data-replace-open]');
+
+            if (replaceTrigger) {
+                e.preventDefault();
+
+                openReplaceModal();
+
+                return;
+            }
+
+
+            /* -------------------------------------------------
+             * Replace Close
+             * ------------------------------------------------- */
+            const replaceCloseTrigger = e.target.closest('[data-replace-close]');
+
+            if (replaceCloseTrigger) {
+                e.preventDefault();
+
+                closeReplaceModal();
+
+                return;
+            }
+
+
+            /* -------------------------------------------------
+             * Replace Backdrop
+             * ------------------------------------------------- */
+            if (replaceModal && e.target === replaceModal) {
+                closeReplaceModal();
+            }
+        });
+
+
+        /* =====================================================
+         * Keyboard Handling
+         * ===================================================== */
+        document.addEventListener('keydown', function (e) {
+
+            if (e.key !== 'Escape') {
+                return;
+            }
+
+            // Close PDF
+            if (pdfModal && !pdfModal.classList.contains('hidden')) {
+                closePdfModal();
+                return;
+            }
+
+            // Close Replace modal
+            if (
+                replaceModal &&
+                replaceModal.style.display !== 'none'
+            ) {
+                closeReplaceModal();
+            }
+        });
+
+
+        /* =====================================================
+         * Close PDF Modal from iframe
+         * ===================================================== */
+        window.addEventListener('message', function (e) {
+            if (e.data === 'pdf-modal-close') {
+                closePdfModal();
+            }
+        });
+
+    })();
+</script>
 @endsection

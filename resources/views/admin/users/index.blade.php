@@ -1,7 +1,6 @@
 @extends('layouts.admin.app')
 
 @section('content')
-    <div class="mx-auto max-w-7xl">
         {{-- Header --}}
         <div class="mb-6 flex items-center justify-between">
             <div>
@@ -119,7 +118,7 @@
             {{ $users->links() }}
         </div>
         </div>
-    </div>
+
 @endsection
 
 @push('scripts')

@@ -2,7 +2,6 @@
 
 @section('content')
 
-    <div class="rounded-2xl border border-gray-200 bg-white p-5 lg:p-6 dark:border-gray-800 dark:bg-gray-900">
         <div class="mb-6 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
             <div>
                 <h3 class="text-lg font-semibold text-gray-800 dark:text-white/90">E-book Files</h3>
@@ -18,7 +17,6 @@
         </form>
 
         <div id="ebookFileResults">@include('admin.ebook-files._results')</div>
-    </div>
 @endsection
 @push('scripts')
     <script>

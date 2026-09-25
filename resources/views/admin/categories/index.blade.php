@@ -1,7 +1,6 @@
 @extends('layouts.admin.app')
 
 @section('content')
-    <div class="rounded-2xl border border-gray-200 bg-white p-5 lg:p-6 dark:border-gray-800 dark:bg-gray-900">
         <div class="mb-6 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
             <div><h3 class="text-lg font-semibold text-gray-800 dark:text-white">Categories</h3><p class="mt-1 text-sm text-gray-500">Organize books into clear groups.</p></div>
             @can('categories.create')<a href="{{ route('admin.categories.create') }}" class="rounded-lg bg-brand-500 px-4 py-2 text-sm font-medium text-white hover:bg-brand-600">Add category</a>@endcan
@@ -9,7 +8,6 @@
 
         <form id="category-filters" method="GET" action="{{ route('admin.categories.index') }}" class="mb-5 flex flex-col gap-3 sm:flex-row"><input name="search" value="{{ $search }}" placeholder="Search categories" class="w-full max-w-md rounded-lg border border-gray-300 bg-transparent px-3 py-2 text-sm dark:border-gray-700 dark:text-white"><select name="status" class="rounded-lg border border-gray-300 bg-transparent px-3 py-2 text-sm dark:border-gray-700 dark:text-white"><option value="all" @selected($status === 'all')>All statuses</option><option value="active" @selected($status === 'active')>Active</option><option value="inactive" @selected($status === 'inactive')>Inactive</option></select></form>
         <div id="category-results">@include('admin.categories._results', ['categories' => $categories])</div>
-    </div>
 @endsection
 
 @push('scripts')

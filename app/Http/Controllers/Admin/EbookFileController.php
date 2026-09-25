@@ -57,27 +57,51 @@ class EbookFileController extends Controller
         $validated = $request->validate($this->rules());
         $upload = $validated['file'];
 
-        DB::transaction(function () use ($validated, $upload) {
+        $ebookFile = DB::transaction(function () use ($validated, $upload) {
+
             $isPrimary = $validated['is_primary'] ?? false;
+
+            /*
+            * If this is the first file for the book,
+            * it must be the primary file.
+            */
             if (!EbookFile::where('book_id', $validated['book_id'])->exists()) {
                 $isPrimary = true;
             }
+
+            /*
+            * Only one file per book can be primary.
+            */
             if ($isPrimary) {
-                EbookFile::where('book_id', $validated['book_id'])->update(['is_primary' => false]);
+                EbookFile::where('book_id', $validated['book_id'])
+                    ->update([
+                        'is_primary' => false,
+                    ]);
             }
 
-            EbookFile::create([
+            /*
+            * Store the physical file first.
+            */
+            $path = $upload->store('ebooks', 'local');
+
+            /*
+            * Create database record.
+            */
+            return EbookFile::create([
                 'book_id' => $validated['book_id'],
-                'file_path' => $upload->store('ebooks', 'local'),   // ✅ local
-                'file_type' => strtolower($upload->getClientOriginalExtension()),
+                'file_path' => $path,
+                'file_type' => strtolower(
+                    $upload->getClientOriginalExtension()
+                ),
                 'file_size' => $upload->getSize(),
                 'is_primary' => $isPrimary,
             ]);
         });
 
-        return redirect()->route('admin.ebook-files.index')->with('success', 'E-book file uploaded successfully.');
+        return redirect()
+            ->route('admin.ebook-files.show', $ebookFile)
+            ->with('success', 'E-book file uploaded successfully.');
     }
-
     public function show(EbookFile $ebookFile): View
     {
         $ebookFile->load('book:id,title,isbn');
@@ -132,7 +156,7 @@ class EbookFileController extends Controller
             Storage::disk('local')->delete($oldPath);
         }
 
-        return redirect()->route('admin.ebook-files.index')->with('success', 'E-book file updated successfully.');
+        return redirect()->route('admin.ebook-files.show', $ebookFile)->with('success', 'E-book file updated successfully.');
     }
 
     public function destroy(EbookFile $ebookFile): RedirectResponse

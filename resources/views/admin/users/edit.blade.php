@@ -1,7 +1,6 @@
 @extends('layouts.admin.app')
 
 @section('content')
-<div class="mx-auto max-w-2xl">
     <h1 class="mb-6 text-2xl font-semibold text-gray-800 dark:text-white">Edit User</h1>
 
     <form action="{{ route('admin.users.update', $user) }}" method="POST"
@@ -103,5 +102,5 @@
             </button>
         </div>
     </form>
-</div>
+
 @endsection

@@ -105,7 +105,7 @@ class PermissionController extends Controller
             ->unique()
             ->values();
 
-        return view('admin.pages.permissions.edit', [
+        return view('admin.permissions.edit', [
             'title'      => "Edit Permission: {$permission->name}",
             'permission' => $permission,
             'groups'     => $groups,

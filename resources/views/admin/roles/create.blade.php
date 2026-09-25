@@ -2,7 +2,6 @@
 
 @section('content')
 
-    <div class="rounded-2xl border border-gray-200 bg-white p-5 lg:p-6 dark:border-gray-800 dark:bg-gray-900">
         <h3 class="mb-5 text-lg font-semibold text-gray-800 dark:text-white/90">
             Create Role
         </h3>
@@ -59,5 +58,5 @@
                 </button>
             </div>
         </form>
-    </div>
+
 @endsection
