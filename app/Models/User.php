@@ -97,7 +97,7 @@ class User extends Authenticatable implements MustVerifyEmail
         // Assign default role after creation
         static::created(function (User $user) {
             if ($user->roles()->count() === 0) {
-                $user->assignRole('member');
+                $user->hasRole('Member', 'web');
             }
         });
     }

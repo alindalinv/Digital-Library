@@ -22,18 +22,15 @@ use Illuminate\Support\Facades\Route;
 | Admin Authentication
 |--------------------------------------------------------------------------
 |
-| These routes are ONLY for guests using the admin guard.
-| They must NOT use the "admin" middleware.
+| These routes use the dedicated "admin" guard.
 |
 */
 
 Route::middleware('guest:admin')->group(function () {
 
-    // GET /admin/login
     Route::get('/login', [AuthenticatedSessionController::class, 'create'])
         ->name('admin.login');
 
-    // POST /admin/login
     Route::post('/login', [AuthenticatedSessionController::class, 'store'])
         ->name('admin.login.store');
 });
@@ -44,12 +41,13 @@ Route::middleware('guest:admin')->group(function () {
 | Admin Logout
 |--------------------------------------------------------------------------
 |
-| Logout requires an authenticated admin.
+| Logout only requires authentication with the admin guard.
+| Do not use the "admin" authorization middleware here.
 |
 */
 
 Route::post('/logout', [AuthenticatedSessionController::class, 'destroy'])
-    ->middleware('admin')
+    ->middleware('auth:admin')
     ->name('admin.logout');
 
 
@@ -58,14 +56,14 @@ Route::post('/logout', [AuthenticatedSessionController::class, 'destroy'])
 | Protected Admin Panel
 |--------------------------------------------------------------------------
 |
-| Everything inside this group requires:
+| Everything here requires:
 |
-| 1. Admin guard authentication
+| 1. Authentication using the admin guard
 | 2. Admin authorization
 |
 */
 
-Route::middleware(['auth', 'admin'])
+Route::middleware(['auth:admin', 'admin'])
     ->name('admin.')
     ->group(function () {
 
@@ -156,7 +154,9 @@ Route::middleware(['auth', 'admin'])
         */
 
         Route::resource('ebook-files', EbookFileController::class)
-            ->parameters(['ebook-files' => 'ebookFile']);
+            ->parameters([
+                'ebook-files' => 'ebookFile',
+            ]);
 
         Route::get('ebook-files/{ebookFile}/view', [EbookFileController::class, 'view'])
             ->name('ebook-files.view');
@@ -166,9 +166,10 @@ Route::middleware(['auth', 'admin'])
 
         Route::get('ebook-files/{ebookFile}/download', [EbookFileController::class, 'download'])
             ->name('ebook-files.download');
+
         Route::get('ebook-files/{ebookFile}/embed', [EbookFileController::class, 'embed'])
-    ->name('ebook-files.embed');
-    
+            ->name('ebook-files.embed');
+
 
         /*
         |--------------------------------------------------------------------------

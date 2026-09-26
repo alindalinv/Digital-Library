@@ -39,7 +39,7 @@ Route::get('/books/{book:slug}', [BookController::class, 'show'])
 |
 */
 
-Route::middleware(['auth', 'verified'])
+Route::middleware(['auth:web', 'verified'])
     ->group(function () {
 
         /*

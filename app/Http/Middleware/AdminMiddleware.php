@@ -13,45 +13,23 @@ class AdminMiddleware
         Request $request,
         Closure $next
     ): Response {
+        // Always use the dedicated admin guard.
+        $guard = Auth::guard('admin');
 
-        $auth = Auth::guard('admin');
-
-
-        /*
-        |--------------------------------------------------------------------------
-        | 1. Admin authentication
-        |--------------------------------------------------------------------------
-        */
-
-        if (! $auth->check()) {
+        // Authentication safety check.
+        if (! $guard->check()) {
             return redirect()->route('admin.login');
         }
 
+        /** @var \App\Models\User $user */
+        $user = $guard->user();
 
-        /*
-        |--------------------------------------------------------------------------
-        | 2. Get admin user
-        |--------------------------------------------------------------------------
-        */
+        // Account status check.
+        if (! $user->status) {
+            $guard->logout();
 
-        $user = $auth->user();
-
-        if (! $user) {
-            $auth->logout();
-
-            return redirect()->route('admin.login');
-        }
-
-
-        /*
-        |--------------------------------------------------------------------------
-        | 3. Check account status
-        |--------------------------------------------------------------------------
-        */
-
-        if ((int) $user->status !== 1) {
-
-            $auth->logout();
+            $request->session()->invalidate();
+            $request->session()->regenerateToken();
 
             return redirect()
                 ->route('admin.login')
@@ -60,23 +38,11 @@ class AdminMiddleware
                 ]);
         }
 
-
-        /*
-        |--------------------------------------------------------------------------
-        | 4. Check admin permission
-        |--------------------------------------------------------------------------
-        */
-
-        if (! $user->can('admin.access')) {
+        // Admin authorization.
+        // admin.access must exist under the "admin" guard.
+        if (! $user->hasPermissionTo('admin.access', 'admin')) {
             abort(403, 'You do not have admin access.');
         }
-
-
-        /*
-        |--------------------------------------------------------------------------
-        | 5. Continue
-        |--------------------------------------------------------------------------
-        */
 
         return $next($request);
     }

@@ -12,7 +12,7 @@ class RolePermissionSeeder extends Seeder
     {
         /*
         |--------------------------------------------------------------------------
-        | Permissions
+        | Admin Permissions
         |--------------------------------------------------------------------------
         */
 
@@ -94,35 +94,41 @@ class RolePermissionSeeder extends Seeder
         foreach ($permissions as $permission) {
             Permission::firstOrCreate([
                 'name' => $permission,
-                'guard_name' => 'web',
+                'guard_name' => 'admin',
             ]);
         }
 
         /*
         |--------------------------------------------------------------------------
-        | Roles
+        | Admin Roles
         |--------------------------------------------------------------------------
         */
 
         $superAdmin = Role::firstOrCreate([
             'name' => 'Super Admin',
-            'guard_name' => 'web',
+            'guard_name' => 'admin',
         ]);
 
         $admin = Role::firstOrCreate([
             'name' => 'Admin',
-            'guard_name' => 'web',
+            'guard_name' => 'admin',
         ]);
 
         $librarian = Role::firstOrCreate([
             'name' => 'Librarian',
-            'guard_name' => 'web',
+            'guard_name' => 'admin',
         ]);
 
         $editor = Role::firstOrCreate([
             'name' => 'Editor',
-            'guard_name' => 'web',
+            'guard_name' => 'admin',
         ]);
+
+        /*
+        |--------------------------------------------------------------------------
+        | Frontend Role
+        |--------------------------------------------------------------------------
+        */
 
         $member = Role::firstOrCreate([
             'name' => 'Member',
@@ -136,7 +142,7 @@ class RolePermissionSeeder extends Seeder
         */
 
         $superAdmin->syncPermissions(
-            Permission::where('guard_name', 'web')->get()
+            Permission::where('guard_name', 'admin')->get()
         );
 
         /*
@@ -202,6 +208,7 @@ class RolePermissionSeeder extends Seeder
             'ebook-files.create',
             'ebook-files.update',
             'ebook-files.delete',
+            'ebook-files.download',
 
             'borrowings.view',
             'borrowings.create',
@@ -252,7 +259,11 @@ class RolePermissionSeeder extends Seeder
         */
 
         $member->syncPermissions([
-            'books.view',
+            // Frontend permission
+            Permission::firstOrCreate([
+                'name' => 'books.view',
+                'guard_name' => 'web',
+            ]),
         ]);
     }
 }
