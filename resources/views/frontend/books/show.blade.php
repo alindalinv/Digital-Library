@@ -338,25 +338,6 @@
                         .related-books-grid .catalog-book-card {
                             width: 100%;
                         }
-
-                        .related-books-grid .catalog-cover {
-                            height: 220px;
-                            object-fit: cover;
-                        }
-
-                        .related-books-grid .catalog-book-card .card-body {
-                            min-height: 220px;
-                        }
-
-                        @media (max-width: 575.98px) {
-                            .related-books-grid .catalog-cover {
-                                height: 190px;
-                            }
-
-                            .related-books-grid .catalog-book-card .card-body {
-                                min-height: 200px;
-                            }
-                        }
                     </style>
 
                     <div class="row g-3 g-md-4 related-books-grid">

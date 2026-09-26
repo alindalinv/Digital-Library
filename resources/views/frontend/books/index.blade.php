@@ -23,26 +23,6 @@
                 border: 1px solid #dce5f1;
                 box-shadow: 0 0.5rem 1.5rem rgba(31, 51, 73, .06);
             }
-
-            .catalog-card {
-                transition: transform .2s ease;
-            }
-
-            .catalog-card:hover {
-                transform: translateY(-4px);
-            }
-
-            .catalog-cover {
-                height: 260px;
-                object-fit: cover;
-                background: #edf2f7;
-            }
-
-            @media (max-width: 575.98px) {
-                .catalog-cover {
-                    height: 230px;
-                }
-            }
         </style>
     @endpush
     <div class="py-5">

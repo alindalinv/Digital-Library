@@ -34,3 +34,38 @@
     --radius-md: .75rem;
     --radius-lg: 1rem;
 }
+/* =========================================
+   Catalog Card
+   ========================================= */
+
+.catalog-card {
+    transition: transform .2s ease;
+}
+
+.catalog-card:hover {
+    transform: translateY(-4px);
+}
+
+
+/* =========================================
+   Catalog Book Cover
+   ========================================= */
+
+.catalog-cover {
+    width: 100%;
+    height: 260px;
+    object-fit: contain;
+    display: block;
+    background: #edf2f7;
+}
+
+
+/* =========================================
+   Mobile
+   ========================================= */
+
+@media (max-width: 575.98px) {
+    .catalog-cover {
+        height: 230px;
+    }
+}
