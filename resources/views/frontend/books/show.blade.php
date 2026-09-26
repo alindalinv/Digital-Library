@@ -84,7 +84,12 @@
                         <p class="text-secondary mb-3">
                             by
                             @foreach ($book->authors as $author)
-                                <span class="fw-medium text-dark">{{ $author->name }}</span>@if (!$loop->last),@endif
+                                <a
+                                    href="{{ route('authors.show', $author) }}"
+                                    class="fw-medium text-dark text-decoration-none author-link"
+                                >
+                                    {{ $author->name }}
+                                </a>@if (!$loop->last), @endif
                             @endforeach
                         </p>
                     @endif

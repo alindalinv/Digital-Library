@@ -2,11 +2,12 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Admin\EbookFileController;
-
+use App\Http\Controllers\Frontend\AuthorController;
 //error
 Route::get('/404', function () {
     return view('admin.errors.404');
 });
+Route::get('/authors/{author}', [AuthorController::class, 'show']) ->name('authors.show');
 Route::middleware(['auth', 'permission:ebook-files.view'])
     ->prefix('ebooks/{ebookFile}')
     ->name('ebooks.')
