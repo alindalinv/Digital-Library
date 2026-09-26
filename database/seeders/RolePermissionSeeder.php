@@ -12,95 +12,116 @@ class RolePermissionSeeder extends Seeder
     {
         /*
         |--------------------------------------------------------------------------
-        | Admin Permissions
+        | ADMIN PERMISSIONS
         |--------------------------------------------------------------------------
         */
 
-        $permissions = [
-            // Admin access
+        $adminPermissions = [
             'admin.access',
-
-            // Dashboard
             'dashboard.view',
 
-            // Books
             'books.view',
             'books.create',
             'books.update',
             'books.delete',
 
-            // Authors
             'authors.view',
             'authors.create',
             'authors.update',
             'authors.delete',
 
-            // Categories
             'categories.view',
             'categories.create',
             'categories.update',
             'categories.delete',
 
-            // Publishers
             'publishers.view',
             'publishers.create',
             'publishers.update',
             'publishers.delete',
 
-            // E-book files
             'ebook-files.view',
             'ebook-files.create',
             'ebook-files.update',
             'ebook-files.delete',
             'ebook-files.download',
 
-            // Borrowings
             'borrowings.view',
             'borrowings.create',
             'borrowings.update',
             'borrowings.delete',
             'borrowings.approve',
 
-            // Reviews
             'reviews.view',
             'reviews.update',
             'reviews.delete',
 
-            // Users
             'users.view',
             'users.create',
             'users.update',
             'users.delete',
 
-            // Roles
             'roles.view',
             'roles.create',
             'roles.update',
             'roles.delete',
 
-            // Permissions
             'permissions.view',
             'permissions.create',
             'permissions.update',
             'permissions.delete',
 
-            // Reports
             'reports.view',
-
-            // Audit logs
             'audit-logs.view',
         ];
 
-        foreach ($permissions as $permission) {
+        foreach ($adminPermissions as $permission) {
             Permission::firstOrCreate([
                 'name' => $permission,
                 'guard_name' => 'admin',
             ]);
         }
 
+
         /*
         |--------------------------------------------------------------------------
-        | Admin Roles
+        | WEB / FRONTEND PERMISSIONS
+        |--------------------------------------------------------------------------
+        |
+        | These are separate from admin permissions.
+        |
+        */
+
+        $webPermissions = [
+            'books.view',
+
+            'authors.view',
+
+            'categories.view',
+
+            'publishers.view',
+
+            'ebook-files.view',
+            'ebook-files.download',
+
+            'borrowings.view',
+            'borrowings.create',
+
+            'reviews.view',
+            'reviews.create',
+        ];
+
+        foreach ($webPermissions as $permission) {
+            Permission::firstOrCreate([
+                'name' => $permission,
+                'guard_name' => 'web',
+            ]);
+        }
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | ADMIN ROLES
         |--------------------------------------------------------------------------
         */
 
@@ -124,9 +145,10 @@ class RolePermissionSeeder extends Seeder
             'guard_name' => 'admin',
         ]);
 
+
         /*
         |--------------------------------------------------------------------------
-        | Frontend Role
+        | FRONTEND ROLE
         |--------------------------------------------------------------------------
         */
 
@@ -135,19 +157,23 @@ class RolePermissionSeeder extends Seeder
             'guard_name' => 'web',
         ]);
 
+
         /*
         |--------------------------------------------------------------------------
-        | Super Admin
+        | SUPER ADMIN
         |--------------------------------------------------------------------------
         */
 
         $superAdmin->syncPermissions(
-            Permission::where('guard_name', 'admin')->get()
+            Permission::query()
+                ->where('guard_name', 'admin')
+                ->get()
         );
+
 
         /*
         |--------------------------------------------------------------------------
-        | Admin
+        | ADMIN
         |--------------------------------------------------------------------------
         */
 
@@ -174,9 +200,10 @@ class RolePermissionSeeder extends Seeder
             'audit-logs.view',
         ]);
 
+
         /*
         |--------------------------------------------------------------------------
-        | Librarian
+        | LIBRARIAN
         |--------------------------------------------------------------------------
         */
 
@@ -221,9 +248,10 @@ class RolePermissionSeeder extends Seeder
             'reviews.delete',
         ]);
 
+
         /*
         |--------------------------------------------------------------------------
-        | Editor
+        | EDITOR
         |--------------------------------------------------------------------------
         */
 
@@ -252,18 +280,22 @@ class RolePermissionSeeder extends Seeder
             'ebook-files.update',
         ]);
 
+
         /*
         |--------------------------------------------------------------------------
-        | Member
+        | MEMBER
         |--------------------------------------------------------------------------
+        |
+        | IMPORTANT:
+        | These permissions are WEB permissions.
+        |
         */
 
-        $member->syncPermissions([
-            // Frontend permission
-            Permission::firstOrCreate([
-                'name' => 'books.view',
-                'guard_name' => 'web',
-            ]),
-        ]);
+        $member->syncPermissions(
+            Permission::query()
+                ->where('guard_name', 'web')
+                ->whereIn('name', $webPermissions)
+                ->get()
+        );
     }
 }
