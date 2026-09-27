@@ -170,9 +170,8 @@
                                         <a
                                             href="{{ route('admin.authors.show', $author) }}"
                                             title="View"
-                                            class="inline-flex h-9 w-9 items-center justify-center rounded-lg text-gray-500 transition hover:bg-gray-100 hover:text-primary dark:text-gray-400 dark:hover:bg-white/5"
-                                        >
-                                            <i class="fas fa-eye"></i>
+                                            class="text-brand-500 hover:text-brand-600">
+                                            View
                                         </a>
                                     @endcan
 
@@ -180,9 +179,8 @@
                                         <a
                                             href="{{ route('admin.authors.edit', $author) }}"
                                             title="Edit"
-                                            class="inline-flex h-9 w-9 items-center justify-center rounded-lg text-gray-500 transition hover:bg-gray-100 hover:text-primary dark:text-gray-400 dark:hover:bg-white/5"
-                                        >
-                                            <i class="fas fa-edit"></i>
+                                            class="ml-3 text-brand-500 hover:text-brand-600">
+                                            Edit
                                         </a>
                                     @endcan
 
@@ -193,9 +191,8 @@
                                             data-author-id="{{ $author->id }}"
                                             data-author-name="{{ $author->name }}"
                                             title="Delete"
-                                            class="inline-flex h-9 w-9 items-center justify-center rounded-lg text-gray-500 transition hover:bg-red-50 hover:text-red-600 dark:text-gray-400 dark:hover:bg-red-900/20 dark:hover:text-red-400"
-                                        >
-                                            <i class="fas fa-trash-alt"></i>
+                                            class="ml-3 text-red-500 hover:text-red-600">
+                                            Delete
                                         </button>
                                     @endcan
 

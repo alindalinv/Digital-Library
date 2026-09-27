@@ -63,6 +63,7 @@ class AuthenticatedSessionController extends Controller
 
         // Do NOT invalidate the whole session — that would log the
         // frontend user out too. Just rotate the CSRF token.
+        // $request->session()->invalidate();
         $request->session()->regenerateToken();
 
         return redirect()->route('admin.login');

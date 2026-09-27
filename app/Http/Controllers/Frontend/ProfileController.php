@@ -15,38 +15,55 @@ use Illuminate\View\View;
 class ProfileController extends Controller
 {
     /**
-     * Display the user's profile form.
+     * Display the authenticated web user's profile form.
      */
     public function edit(Request $request): View
     {
+        $user = Auth::guard('web')->user();
+
+        abort_unless($user, 403);
+
         return view('frontend.profile.edit', [
-            'user' => $request->user(),
+            'user' => $user,
         ]);
     }
 
-    /* -----------------------------------------------------------------
-     |  Update: Personal Information (name, email, phone, bio, etc.)
-     | ----------------------------------------------------------------- */
-
+    /**
+     * Update personal information.
+     */
     public function update(ProfileUpdateRequest $request): RedirectResponse
     {
-        $user = $request->user();
+        $user = Auth::guard('web')->user();
+
+        abort_unless($user, 403);
+
         $validated = $request->validated();
 
-        // Handle photo upload
+        /*
+         * Handle profile photo upload.
+         */
         if ($request->hasFile('photo')) {
-            // Delete old photo if exists
-            if ($user->photo && Storage::disk('public')->exists($user->photo)) {
+            // Delete the old photo if it exists.
+            if (
+                $user->photo &&
+                Storage::disk('public')->exists($user->photo)
+            ) {
                 Storage::disk('public')->delete($user->photo);
             }
 
-            $validated['photo'] = $request->file('photo')
+            $validated['photo'] = $request
+                ->file('photo')
                 ->store('avatars', 'public');
         }
 
+        /*
+         * Update user information.
+         */
         $user->fill($validated);
 
-        // Reset email verification if email changed
+        /*
+         * Reset email verification when email changes.
+         */
         if ($user->isDirty('email')) {
             $user->email_verified_at = null;
         }
@@ -58,12 +75,15 @@ class ProfileController extends Controller
             ->with('success', 'Profile updated successfully.');
     }
 
-    /* -----------------------------------------------------------------
-     |  Update: Social Links
-     | ----------------------------------------------------------------- */
-
+    /**
+     * Update social links.
+     */
     public function updateSocial(Request $request): RedirectResponse
     {
+        $user = Auth::guard('web')->user();
+
+        abort_unless($user, 403);
+
         $validated = $request->validate([
             'facebook' => ['nullable', 'url', 'max:255'],
             'twitter' => ['nullable', 'url', 'max:255'],
@@ -71,65 +91,107 @@ class ProfileController extends Controller
             'instagram' => ['nullable', 'url', 'max:255'],
         ]);
 
-        // Convert empty strings to null
+        /*
+         * Convert empty strings to null.
+         */
         $validated = array_map(
-            fn($value) => $value ?: null,
+            fn ($value) => $value ?: null,
             $validated
         );
 
-        $request->user()->update($validated);
+        $user->update($validated);
 
         return Redirect::route('profile.edit')
             ->with('status', 'social-updated')
             ->with('success', 'Social links updated successfully.');
     }
 
-    /* -----------------------------------------------------------------
-     |  Update: Password
-     | ----------------------------------------------------------------- */
-
+    /**
+     * Update password.
+     */
     public function updatePassword(Request $request): RedirectResponse
     {
+        $user = Auth::guard('web')->user();
+
+        abort_unless($user, 403);
+
         $validated = $request->validateWithBag('updatePassword', [
-            'current_password' => ['required', 'current_password'],
-            'password' => ['required', 'string', 'min:8', 'confirmed'],
+            'current_password' => [
+                'required',
+                'current_password:web',
+            ],
+            'password' => [
+                'required',
+                'string',
+                'min:8',
+                'confirmed',
+            ],
         ]);
 
-        $request->user()->forceFill([
+        $user->forceFill([
             'password' => Hash::make($validated['password']),
         ])->save();
+
+        /*
+         * Keep the current web session alive.
+         */
+        Auth::guard('web')->login($user);
 
         return Redirect::route('profile.edit')
             ->with('status', 'password-updated')
             ->with('success', 'Password updated successfully.');
     }
 
-    /* -----------------------------------------------------------------
-     |  Delete: Account
-     | ----------------------------------------------------------------- */
-
+    /**
+     * Delete the authenticated web user's account.
+     */
     public function destroy(Request $request): RedirectResponse
     {
+        $user = Auth::guard('web')->user();
+
+        abort_unless($user, 403);
+
         $request->validateWithBag('userDeletion', [
-            'password' => ['required', 'current_password'],
+            'password' => [
+                'required',
+                'current_password:web',
+            ],
         ]);
 
-        $user = $request->user();
-
-        // Delete profile photo
-        if ($user->photo && Storage::disk('public')->exists($user->photo)) {
+        /*
+         * Delete profile photo.
+         */
+        if (
+            $user->photo &&
+            Storage::disk('public')->exists($user->photo)
+        ) {
             Storage::disk('public')->delete($user->photo);
         }
 
-        Auth::logout();
+        /*
+         * Logout ONLY the web guard.
+         *
+         * Do not use Auth::logout() because your application
+         * also has a separate admin guard.
+         */
+        Auth::guard('web')->logout();
 
+        /*
+         * Delete the user account.
+         */
         $user->delete();
 
+        /*
+         * Destroy the current session.
+         */
         $request->session()->invalidate();
         $request->session()->regenerateToken();
 
         return Redirect::to('/')
             ->with('status', 'account-deleted')
-            ->with('success', 'Your account has been deleted. We\'re sorry to see you go!');
+            ->with(
+                'success',
+                'Your account has been deleted. We\'re sorry to see you go!'
+            );
     }
 }

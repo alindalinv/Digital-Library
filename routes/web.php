@@ -8,7 +8,7 @@ Route::get('/404', function () {
     return view('admin.errors.404');
 });
 Route::get('/authors/{author}', [AuthorController::class, 'show']) ->name('authors.show');
-Route::middleware(['auth', 'permission:ebook-files.view'])
+Route::middleware(['permission:ebook-files.view'])
     ->prefix('ebooks/{ebookFile}')
     ->name('ebooks.')
     ->group(function () {
@@ -17,6 +17,6 @@ Route::middleware(['auth', 'permission:ebook-files.view'])
         Route::get('/view',     [EbookFileController::class, 'view'])->name('view');
     });
 
-Route::middleware(['auth', 'permission:ebook-files.download'])
+Route::middleware(['permission:ebook-files.download'])
     ->get('/ebooks/{ebookFile}/download', [EbookFileController::class, 'download'])
     ->name('ebooks.download');

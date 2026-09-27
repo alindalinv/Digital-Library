@@ -3,6 +3,8 @@
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
+use App\Http\Middleware\EbookFileAccessMiddleware; 
+use App\Http\Middleware\EbookFileDownloadMiddleware;
 use Illuminate\Support\Facades\Route;
 
 return Application::configure(basePath: dirname(__DIR__))
@@ -69,6 +71,8 @@ return Application::configure(basePath: dirname(__DIR__))
 
             'role_or_permission' =>
                 \Spatie\Permission\Middleware\RoleOrPermissionMiddleware::class,
+            'ebook.file.access' => EbookFileAccessMiddleware::class, 
+            'ebook.file.download' => EbookFileDownloadMiddleware::class,
         ]);
 
         // `guest:admin` uses this destination when an admin is already
