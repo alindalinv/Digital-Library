@@ -104,22 +104,21 @@
 
                     <div class="col-6 col-md-4 col-lg-3">
 
-                        <div class="card h-100 border-0 shadow-sm rounded-4 overflow-hidden">
+                        <div class="card h-100 border-0 shadow-sm position-relative catalog-book-card">
 
                             {{-- Book Cover --}}
                             <a
                                 href="{{ route('books.show', $book) }}"
-                                class="text-decoration-none"
+                                class="text-decoration-none overflow-hidden rounded-top"
                             >
                                 <div
-                                    class="bg-light d-flex align-items-center justify-content-center"
-                                    style="height: 280px;"
+                                    class="catalog-cover bg-light d-flex align-items-center justify-content-center"
                                 >
                                     @if ($book->cover_image)
                                         <img
                                             src="{{ asset('storage/' . $book->cover_image) }}"
                                             alt="{{ $book->title }}"
-                                            class="w-100 h-100 object-fit-cover"
+                                            class="card-img-top catalog-cover"
                                             loading="lazy"
                                         >
                                     @else
