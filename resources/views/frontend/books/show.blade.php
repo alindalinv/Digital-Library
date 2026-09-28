@@ -617,21 +617,25 @@
 
             </div>
             {{-- Attachments --}}
-           @php
-                $webUser = auth('web')->user();
+            @php
                 $adminUser = auth('admin')->user();
+                $webUser = auth('web')->user();
                 $user = $adminUser ?? $webUser;
-                $guard = $adminUser ? 'admin' : ($webUser ? 'web' : null);
-                $isAuthenticated = $user !== null; 
-                $canPreview = $user && $guard
-                    ? $user->hasPermissionTo('ebook-files.view', $guard)
-                    : false;
-
-                $canDownload = $user && $guard
-                    ? $user->hasPermissionTo('ebook-files.download', $guard)
-                    : false;
+                $isAdmin = $adminUser !== null;
+                $isAuthenticated = $user !== null;
+                if ($adminUser) {
+                    // Admin users use ADMIN guard permissions.
+                    $canPreview = $adminUser->hasPermissionTo('ebook-files.view', 'admin');
+                    $canDownload = $adminUser->hasPermissionTo('ebook-files.download', 'admin');
+                } elseif ($webUser) {
+                    // Frontend users use WEB guard permissions.
+                    $canPreview = $webUser->hasPermissionTo('ebook-files.view', 'web');
+                    $canDownload = $webUser->hasPermissionTo('ebook-files.download', 'web');
+                } else {
+                    $canPreview = false;
+                    $canDownload = false;
+                }
             @endphp
-
             @if ($book->files->isNotEmpty())
                 <div class="mt-5">
                     <h2 class="h5 fw-semibold mb-3">
