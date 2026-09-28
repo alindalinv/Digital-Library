@@ -620,25 +620,16 @@
            @php
                 $webUser = auth('web')->user();
                 $adminUser = auth('admin')->user();
+                $user = $adminUser ?? $webUser;
+                $guard = $adminUser ? 'admin' : ($webUser ? 'web' : null);
+                $isAuthenticated = $user !== null; 
+                $canPreview = $user && $guard
+                    ? $user->hasPermissionTo('ebook-files.view', $guard)
+                    : false;
 
-                if ($webUser) {
-                    $user = $webUser;
-                    $guard = 'web';
-                } elseif ($adminUser) {
-                    $user = $adminUser;
-                    $guard = 'admin';
-                } else {
-                    $user = null;
-                    $guard = null;
-                }
-
-                $isAuthenticated = $user !== null;
-
-                $canPreview = $isAuthenticated
-                    && $user->hasPermissionTo('ebook-files.view', $guard);
-
-                $canDownload = $isAuthenticated
-                    && $user->hasPermissionTo('ebook-files.download', $guard);
+                $canDownload = $user && $guard
+                    ? $user->hasPermissionTo('ebook-files.download', $guard)
+                    : false;
             @endphp
 
             @if ($book->files->isNotEmpty())
